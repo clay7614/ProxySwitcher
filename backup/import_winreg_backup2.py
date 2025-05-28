@@ -1,0 +1,260 @@
+import winreg
+import ctypes
+import sys
+import os # アイコンファイルのパス解決用
+from PIL import Image # アイコン画像読み込み用
+import pystray # タスクトレイ制御用
+from pynput import keyboard # キーボード入力監視用
+
+
+# レジストリ関連の定数
+INTERNET_SETTINGS_PATH = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+PROXY_ENABLE_VALUE_NAME = "ProxyEnable"
+
+# WinINet API関連の定数 (設定変更の即時反映のため)
+INTERNET_OPTION_SETTINGS_CHANGED = 39
+INTERNET_OPTION_REFRESH = 37
+
+# アイコンファイル名 (スクリプトと同じディレクトリに配置)
+ICON_FILENAME = "proxy_icon.ico" # または "icon.ico" など
+
+# --- ショートカットキー設定 ---
+# 例: Ctrl + Alt + P (P for Proxy)
+# 他の候補:
+# - frozenset([keyboard.Key.ctrl_l, keyboard.Key.shift_l, keyboard.Key.alt_l, keyboard.KeyCode.from_char('p')]) # Ctrl+Shift+Alt+P
+# - frozenset([keyboard.Key.f7]) # F7キー
+SHORTCUT_KEY_COMBINATION = frozenset([
+    keyboard.Key.ctrl_l,  # 左Ctrlキー (keyboard.Key.ctrl でも可)
+    keyboard.Key.alt_l,   # 左Altキー (keyboard.Key.alt でも可)
+    keyboard.KeyCode.from_char('p') # 'p'キー
+])
+current_pressed_keys = set() # 現在押されているキーを保持するセット
+keyboard_listener = None # キーボードリスナーオブジェクト
+tray_icon = None # pystray.Icon オブジェクトを保持
+
+def get_proxy_status():
+    """現在のプロキシ設定状態を確認します。"""
+    try:
+        # HKEY_CURRENT_USER の下にあるインターネット設定キーを開く
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, INTERNET_SETTINGS_PATH, 0, winreg.KEY_READ) as key:
+            # ProxyEnable 値を読み取る (0:無効, 1:有効)
+            value, reg_type = winreg.QueryValueEx(key, PROXY_ENABLE_VALUE_NAME)
+            return bool(value)
+    except FileNotFoundError:
+        # ProxyEnable 値が存在しない場合は、プロキシ無効とみなす
+        print(f"情報: プロキシ設定値 '{PROXY_ENABLE_VALUE_NAME}' が見つかりません。無効として扱います。")
+        return False
+    except Exception as e:
+        print(f"プロキシ状態の読み取り中にエラーが発生しました: {e}")
+        return False # エラー時は無効として扱うか、例外を再送出するかは要件による
+
+def set_proxy_status(enable: bool):
+    """プロキシ設定を有効または無効にします。"""
+    try:
+        # HKEY_CURRENT_USER の下にあるインターネット設定キーを書き込みモードで開く
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, INTERNET_SETTINGS_PATH, 0, winreg.KEY_WRITE) as key:
+            # ProxyEnable 値を設定 (DWORD型)
+            winreg.SetValueEx(key, PROXY_ENABLE_VALUE_NAME, 0, winreg.REG_DWORD, 1 if enable else 0)
+        return True
+    except PermissionError:
+        print(f"エラー: レジストリへの書き込み権限がありません。")
+        print(f"このスクリプトを管理者として実行する必要があるかもしれません。")
+        return False
+    except Exception as e:
+        print(f"プロキシ状態の設定中にエラーが発生しました: {e}")
+        return False
+
+def refresh_internet_settings():
+    """システムにインターネット設定の変更を通知し、リフレッシュします。"""
+    try:
+        internet_set_option = ctypes.windll.Wininet.InternetSetOptionW
+        
+        # 設定変更を通知
+        # InternetSetOptionW(hInternet, dwOption, lpBuffer, dwBufferLength)
+        # グローバルオプションの場合、hInternet は NULL (None)
+        # INTERNET_OPTION_SETTINGS_CHANGED の場合、lpBuffer は NULL (None), dwBufferLength は 0
+        settings_changed_result = internet_set_option(None, INTERNET_OPTION_SETTINGS_CHANGED, None, 0)
+        if not settings_changed_result:
+            # GetLastError は Windows API のエラーコードを返す
+            print(f"警告: システムへの設定変更通知に失敗しました (INTERNET_OPTION_SETTINGS_CHANGED)。エラーコード: {ctypes.GetLastError()}")
+        else:
+            print("システムに設定変更を通知しました (INTERNET_OPTION_SETTINGS_CHANGED)。")
+
+        # 設定をリフレッシュ
+        # INTERNET_OPTION_REFRESH の場合も同様
+        refresh_result = internet_set_option(None, INTERNET_OPTION_REFRESH, None, 0)
+        if not refresh_result:
+            print(f"警告: インターネット設定のリフレッシュに失敗しました (INTERNET_OPTION_REFRESH)。エラーコード: {ctypes.GetLastError()}")
+        else:
+            print("インターネット設定をリフレッシュしました (INTERNET_OPTION_REFRESH)。")
+            
+    except AttributeError:
+        # windll.Wininet や InternetSetOptionW が見つからない場合 (通常は発生しない)
+        print("エラー: WinINetライブラリのロードに失敗しました。Windows環境で実行しているか確認してください。")
+    except Exception as e:
+        print(f"インターネット設定の更新中に予期せぬエラーが発生しました: {e}")
+
+def _perform_proxy_toggle():
+    """
+    プロキシ設定を実際にトグルし、結果を返す内部関数。
+    成功した場合はTrue、失敗した場合はFalseを返します。
+    """
+    current_status = get_proxy_status()
+    new_status = not current_status
+    action_verb = "有効化" if new_status else "無効化"
+    new_status_str = "有効" if new_status else "無効"
+
+    print(f"プロキシ設定を {new_status_str} に変更します...")
+    if set_proxy_status(new_status):
+        print(f"レジストリのプロキシ設定を {new_status_str} に変更しました。")
+        refresh_internet_settings()
+        print(f"プロキシ設定は正常に {new_status_str} に変更されました。")
+        return True
+    else:
+        print(f"プロキシ設定の {action_verb} に失敗しました。")
+        return False
+
+def get_proxy_menu_text(item):
+    """メニューのプロキシ切り替えテキストを動的に生成します。"""
+    if get_proxy_status():
+        return "プロキシを無効にする"
+    else:
+        return "プロキシを有効にする"
+
+def toggle_proxy_action_menu(icon_obj, item): # pystrayメニューコールバック用
+    """プロキシ設定をトグルし、メニューを更新します。(メニューからの呼び出し用)"""
+    _perform_proxy_toggle()
+    if icon_obj: # icon_obj は pystray.Icon インスタンス
+        icon_obj.update_menu()
+
+def format_shortcut_keys(keys_iterable):
+    """pynputのキーのイテラブルを人間が読める形式の文字列に変換します。"""
+    display_parts = []
+    ctrl_keys = {keyboard.Key.ctrl, keyboard.Key.ctrl_l, keyboard.Key.ctrl_r}
+    alt_keys = {keyboard.Key.alt, keyboard.Key.alt_l, keyboard.Key.alt_r}
+    shift_keys = {keyboard.Key.shift, keyboard.Key.shift_l, keyboard.Key.shift_r}
+
+    has_ctrl = any(k in keys_iterable for k in ctrl_keys)
+    has_alt = any(k in keys_iterable for k in alt_keys)
+    has_shift = any(k in keys_iterable for k in shift_keys)
+
+    if has_ctrl: display_parts.append("Ctrl")
+    if has_alt: display_parts.append("Alt")
+    if has_shift: display_parts.append("Shift")
+
+    for key_obj in keys_iterable:
+        is_modifier = False
+        if isinstance(key_obj, keyboard.Key):
+            if key_obj in ctrl_keys or key_obj in alt_keys or key_obj in shift_keys:
+                is_modifier = True
+        
+        if not is_modifier:
+            if isinstance(key_obj, keyboard.KeyCode) and key_obj.char:
+                display_parts.append(key_obj.char.upper())
+            elif isinstance(key_obj, keyboard.Key): # Fキーなど
+                display_parts.append(str(key_obj).replace("Key.", "").capitalize())
+                
+    return " + ".join(display_parts)
+
+def on_key_press(key):
+    """キーが押されたときに呼び出される関数。"""
+    global current_pressed_keys, tray_icon
+    if key in SHORTCUT_KEY_COMBINATION:
+        current_pressed_keys.add(key)
+        if SHORTCUT_KEY_COMBINATION.issubset(current_pressed_keys):
+            shortcut_str = format_shortcut_keys(SHORTCUT_KEY_COMBINATION)
+            print(f"ショートカットキー ({shortcut_str}) が押されました。プロキシを切り替えます。")
+            if _perform_proxy_toggle(): # プロキシ切り替え実行
+                if tray_icon:
+                    tray_icon.update_menu() # タスクトレイメニューのテキストを更新
+            # 連続実行を防ぐため、一度処理したらクリアする（キーを押しっぱなしの場合）
+            # current_pressed_keys.clear() # こちらはキーリピートで連続実行される可能性
+
+def on_key_release(key):
+    """キーが離されたときに呼び出される関数。"""
+    global current_pressed_keys
+    if key in SHORTCUT_KEY_COMBINATION: # 該当キーが離された時のみクリア
+        # この実装だと、Ctrl+Altを押したままPを連打すると、Pを離すたびにトグルされる。
+        # より厳密には、全てのキーが離されたときにクリアするか、
+        # on_pressでトグル後すぐにcurrent_pressed_keys.clear()する。
+        # 今回はon_pressでトグル後にクリアする方式を採用しないため、
+        # Ctrl+Altを押したままPをタイプするたびにトグルされる。
+        # もし「すべてのキーが一度離されてから再度押された場合のみ」という挙動にしたい場合は、
+        # on_pressでトグル後に current_pressed_keys.clear() を行う。
+        # ここでは、組み合わせの一部が離れたらセットから除く。
+        if key in current_pressed_keys:
+             current_pressed_keys.remove(key)
+
+def exit_action(icon, item):
+    """プログラムを終了します。"""
+    global keyboard_listener
+    print("プログラムを終了します...")
+    if keyboard_listener:
+        print("キーボードリスナーを停止しています...")
+        keyboard_listener.stop()
+    if icon: # icon は pystray.Icon インスタンス
+        icon.stop()
+
+def setup_tray_icon():
+    """タスクトレイアイコンとメニューをセットアップし、表示します。"""
+    global tray_icon, keyboard_listener # グローバル変数の使用を宣言
+
+    # アイコンファイルのパスを取得
+    # スクリプトが実行されているディレクトリを基準にする
+    script_dir = os.path.dirname(os.path.abspath(sys.argv[0] if getattr(sys, 'frozen', False) else __file__))
+    icon_path = os.path.join(script_dir, ICON_FILENAME)
+
+    if not os.path.exists(icon_path):
+        print(f"エラー: アイコンファイルが見つかりません: {icon_path}")
+        print(f"スクリプトと同じディレクトリに '{ICON_FILENAME}' を配置してください。")
+        return
+
+    try:
+        image = Image.open(icon_path)
+    except Exception as e:
+        print(f"エラー: アイコンファイルの読み込みに失敗しました: {e}")
+        return
+
+    # メニューアイテムの定義
+    # MenuItemの第一引数にテキストを返す関数を渡すことで動的なテキストを実現
+    menu = pystray.Menu(
+        pystray.MenuItem(
+            get_proxy_menu_text, # 現在の状態に応じてテキストが変わる
+            toggle_proxy_action_menu # メニューアイテムからのアクション
+        ),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem(
+            "終了",
+            exit_action
+        )
+    )
+    
+    icon_object = pystray.Icon("proxy_toggler", image, "プロキシ設定トグラー", menu)
+    tray_icon = icon_object # グローバル変数にアイコンオブジェクトを保持
+
+    print("タスクトレイアイコンを起動します。右クリックでメニューを表示できます。")
+    shortcut_str = format_shortcut_keys(SHORTCUT_KEY_COMBINATION)
+    print(f"ショートカットキー ({shortcut_str}) でプロキシ設定を切り替えられます。")
+
+    # キーボードリスナーを別スレッドで開始
+    keyboard_listener = keyboard.Listener(on_press=on_key_press, on_release=on_key_release)
+    keyboard_listener.start()
+
+    try:
+        icon_object.run() # タスクトレイのメインループを開始 (ブロッキング)
+    finally:
+        # icon.run() が終了した (通常は exit_action で icon.stop() が呼ばれた) 後に実行
+        if keyboard_listener and keyboard_listener.is_alive():
+            print("タスクトレイ終了後、キーボードリスナーを確実に停止します。")
+            keyboard_listener.stop()
+            # keyboard_listener.join() # joinするとメインスレッドが待機してしまう場合がある
+        print("タスクトレイアプリケーションが終了しました。")
+
+def main():
+    if sys.platform != "win32":
+        print("このスクリプトはWindows環境でのみ動作します。")
+        return
+    setup_tray_icon()
+
+if __name__ == "__main__":
+    main()
