@@ -1,10 +1,9 @@
-# notification_manager.py
 import os
 import tempfile
 import atexit
 from winotify import Notification, Notifier, Registry
-import icon_utils # icon_utils.py から関数をインポート
-import config     # config.py から定数をインポート
+import icon_utils
+from app_config_loader import config
 
 class NotificationManager:
     def __init__(self, app_id, icon_base64_string):
@@ -17,6 +16,9 @@ class NotificationManager:
             # app_id は Notifier ではなく Registry に渡す
             registry = Registry(app_id=self.app_id) # app_name引数を削除
             self.win_notifier = Notifier(registry)
+        except PermissionError as e:
+                print(f"エラー: 既に同じアプリケーションが起動中です。")
+                os._exit(1)
         except Exception as e:
             print(f"エラー: winotify.Notifierの初期化に失敗しました: {e}")
 

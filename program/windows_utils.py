@@ -1,9 +1,8 @@
-# windows_utils.py
 import ctypes
 import sys
 import os
 import winreg
-import config
+from app_config_loader import config
 
 def set_app_user_model_id(app_id):
     """現在のプロセスにAppUserModelIDを設定します。Windows Vista以降で有効です。"""

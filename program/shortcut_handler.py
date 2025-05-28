@@ -1,5 +1,5 @@
-# shortcut_handler.py
 from pynput import keyboard
+# config は main.py から渡されるため、直接の import は不要
 
 class ShortcutHandler:
     def __init__(self, shortcut_keys, proxy_manager, tray_manager):

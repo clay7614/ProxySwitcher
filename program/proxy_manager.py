@@ -1,7 +1,6 @@
-# proxy_manager.py
 import winreg
 import ctypes
-import config # config.py から定数をインポート
+from app_config_loader import config
 
 class ProxyManager:
     def __init__(self, notification_manager):
