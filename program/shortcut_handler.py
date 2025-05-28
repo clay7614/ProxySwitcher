@@ -29,13 +29,13 @@ class ShortcutHandler:
             if isinstance(key_obj, keyboard.Key): # pynput.keyboard.Key オブジェクトの場合
                 if key_obj in ctrl_keys or key_obj in alt_keys or key_obj in shift_keys:
                     is_modifier = True
-            
+
             if not is_modifier:
                 if isinstance(key_obj, keyboard.KeyCode) and key_obj.char:
                     display_parts.append(key_obj.char.upper())
                 elif isinstance(key_obj, keyboard.Key): # Fキーなど、Enumメンバーの場合
                     display_parts.append(str(key_obj).replace("Key.", "").capitalize())
-        
+
         return " + ".join(sorted(list(set(display_parts)))) # 重複を除きソートして結合
 
     def _on_press(self, key):

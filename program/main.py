@@ -24,7 +24,7 @@ def main():
     # NotificationManager は atexit で自身のクリーンアップを登録
     notification_mgr = NotificationManager(config.APP_ID, config.ICON_BASE64_STRING)
     proxy_mgr = ProxyManager(notification_mgr)
-    
+
     # ShortcutHandler と TrayManager は相互に参照する場合があるため、
     # TrayManager が ShortcutHandler を保持し、リスナーの開始/停止を管理する
     shortcut_hdlr = ShortcutHandler(config.SHORTCUT_KEY_COMBINATION, proxy_mgr, None) # TrayManagerは後で設定

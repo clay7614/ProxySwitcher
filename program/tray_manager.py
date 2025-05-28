@@ -52,7 +52,7 @@ class TrayManager:
         )
 
         self.icon = pystray.Icon(config.APP_ID.lower().replace(" ", "_"), self._icon_image, config.APP_ID, menu)
-        
+
         print("タスクトレイアイコンを起動します。右クリックでメニューを表示できます。")
         if self.shortcut_handler:
             shortcut_str = self.shortcut_handler.format_shortcut_keys_display(config.SHORTCUT_KEY_COMBINATION)

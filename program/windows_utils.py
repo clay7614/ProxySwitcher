@@ -63,7 +63,7 @@ def update_path_environment_variable():
                 print(f"情報: 環境変数 '{config.PATH_VALUE_NAME}' が見つかりません。新規に作成します。")
 
             original_paths_list = [os.path.normpath(p.strip()) for p in current_path_value.split(';') if p.strip()]
-            
+
             paths_after_removal = [
                 p for p in original_paths_list
                 if not (os.path.normcase(p) != os.path.normcase(current_script_dir) and

@@ -51,10 +51,10 @@ class NotificationManager:
         icon_path = self._get_icon_path()
         try:
             toast = Notification(app_id=self.app_id, # Notifier初期化時のapp_idが使われるはずだが、明示
-                                 title=title,
-                                 msg=message,
-                                 icon=icon_path,
-                                 duration='short')
+                                title=title,
+                                msg=message,
+                                icon=icon_path,
+                                duration='short')
             toast.show()
         except Exception as e:
             print(f"Windows通知の表示中にエラーが発生しました: {e}")
