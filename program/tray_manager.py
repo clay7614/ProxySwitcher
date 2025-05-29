@@ -1,6 +1,6 @@
 import pystray
 import icon_utils
-from program.config_loader import config
+from config_loader import config
 
 class TrayManager:
     def __init__(self, proxy_manager, shortcut_handler):

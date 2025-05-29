@@ -1,6 +1,6 @@
 import winreg
 import ctypes
-from program.config_loader import config
+from config_loader import config
 
 class ProxyManager:
     def __init__(self, notification_manager):

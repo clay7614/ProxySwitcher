@@ -2,7 +2,7 @@ import ctypes
 import sys
 import os
 import winreg
-from program.config_loader import config
+from config_loader import config
 
 def set_app_user_model_id(app_id):
     """現在のプロセスにAppUserModelIDを設定します。Windows Vista以降で有効です。"""

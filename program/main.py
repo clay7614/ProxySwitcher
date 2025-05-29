@@ -1,7 +1,7 @@
 import sys
 import os # update_path_environment_variable で使用
 
-from program.config_loader import config
+from config_loader import config
 import windows_utils
 from proxy_manager import ProxyManager
 from notification_manager import NotificationManager

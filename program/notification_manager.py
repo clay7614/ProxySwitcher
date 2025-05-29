@@ -3,7 +3,7 @@ import tempfile
 import atexit
 from winotify import Notification, Notifier, Registry
 import icon_utils
-from program.config_loader import config
+from config_loader import config
 
 class NotificationManager:
     def __init__(self, app_id, icon_base64_string):
