@@ -1,50 +1,74 @@
-# Proxy Switcher
+# ProxySwitcher
 
-タスクトレイ上でプロキシ設定をON/OFFできるPython製アプリケーション。
-Ctrl+Alt+Pでプロキシ切り替えが可能。
+![ProxySwitcher](https://img.shields.io/badge/Platform-Windows-blue.svg)
 
-## 使い方
-1. 必要パッケージをインストール:
+**ProxySwitcher**は、Windowsでプロキシ設定を簡単にON/OFFできる軽量なタスクトレイアプリケーションです。
 
-   ```powershell
-   pip install -r requirements.txt
-   ```
+## ✨ 特徴
 
-2. 実行:
+- **ワンクリックでプロキシ切り替え** - タスクトレイから瞬時にプロキシを有効/無効にできます
+- **ホットキー対応** - `Ctrl + Alt + P` でどこからでも素早く切り替え
+- **自動起動** - Windows起動時に自動でアプリが立ち上がります
+- **設定カスタマイズ** - プロキシサーバーの設定を簡単に変更できます
+- **軽量** - システムリソースをほとんど使用しません
+- **視覚的なフィードバック** - アイコンの色でプロキシ状態を一目で確認
 
-   ```powershell
-   python main.py
-   ```
+## 🚀 インストールと使い方
 
-# README.md を更新
+### 1. ダウンロード
+[Releases](../../releases)ページから最新版の`ProxySwitcher.exe`をダウンロードしてください。
 
-## exe化
-PyInstallerを使ってexe化できます:
+### 2. 実行
+1. ダウンロードした`ProxySwitcher.exe`を任意のフォルダに配置
+2. `ProxySwitcher.exe`をダブルクリックして起動
+3. タスクトレイにプロキシアイコンが表示されます
 
-```powershell
-# 1. アイコンファイルを生成
-python create_icon.py
+### 3. 基本的な使い方
 
-# 2. PyInstallerをインストール
-pip install pyinstaller
+#### プロキシの切り替え
+- **方法1**: タスクトレイのアイコンを右クリック → 「プロキシをON」または「プロキシをOFF」を選択
+- **方法2**: ホットキー `Ctrl + Alt + P` を押す
 
-# 3. specファイルを使用してexe化
-pyinstaller ProxySwitcher.spec
+#### アイコンの見方
+- 🟢 **緑色**: プロキシが有効
+- 🔴 **赤色**: プロキシが無効
 
-# または、コマンドラインで直接実行
-# pyinstaller --onefile --windowed --name="ProxySwitcher" --version-file="version_info.txt" --icon="icon.ico" main.py
-```
+## ⚙️ 設定
 
-生成されたexeファイルは `dist` フォルダ内に作成されます。
+### プロキシサーバーの設定
+1. タスクトレイアイコンを右クリック
+2. 「設定」を選択
+3. プロキシサーバーのアドレスとポートを入力（例：`proxy.example.com:8080`）
+4. 「保存」をクリック
 
-## ファイル構成
-- `main.py` - メインプログラム  
-- `proxy_icon.ico` - アプリケーションアイコン
-- `ProxySwitcher.spec` - PyInstaller設定ファイル
-- `version_info.txt` - バージョン情報
-- `proxy_config.json` - プロキシ設定（自動生成）
+### 自動起動の設定
+設定画面で「Windowsスタートアップ時に自動起動」にチェックを入れると、PC起動時に自動でProxySwitcherが立ち上がります。
 
-## 設定
-- exe化時、設定ファイルは `%APPDATA%\ProxySwitcher\proxy_config.json` に保存されます
-- 開発時は実行ディレクトリに `proxy_config.json` が作成されます
-- `proxy_icon.ico` はexe内にリソースとして埋め込まれ、実行時に自動で利用されます
+## 🔧 システム要件
+
+- **OS**: Windows 10/11 (64bit)
+- **メモリ**: 最小50MB程度
+- **ディスク容量**: 約22MB
+
+## 🆘 トラブルシューティング
+
+### よくある問題
+
+**Q: アプリが起動しない**
+- Windowsセキュリティソフトがブロックしている可能性があります。セキュリティソフトの設定で例外に追加してください。
+
+**Q: プロキシ設定が反映されない**
+- 管理者権限で実行してみてください。
+- 他のプロキシ設定アプリが干渉していないか確認してください。
+
+**Q: ホットキーが効かない**
+- 他のアプリが同じホットキーを使用していないか確認してください。
+- 管理者権限で実行してみてください。
+
+## 🤝 サポート
+
+問題が発生した場合や機能要望がある場合は、[Issues](../../issues)ページからお気軽にご報告ください。
+
+---
+
+💡 **ヒント**: 初回起動時にWindowsファイアウォールの警告が表示される場合がありますが、「アクセスを許可する」を選択してください。これはアプリが正常に動作するために必要です。
