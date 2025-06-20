@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import subprocess
+import time
 
 # exe化時のリソースファイルパス取得関数
 def get_resource_path(relative_path):
@@ -101,8 +102,33 @@ def toggle_proxy(icon=None, item=None):
 
 # ホットキーリスナー
 def keyboard_listener(icon):
-    keyboard.add_hotkey('ctrl+alt+p', lambda: toggle_proxy(icon))
-    keyboard.wait()
+    def register_hotkey():
+        try:
+            # 既存のホットキーをクリア（エラーを無視）
+            try:
+                keyboard.remove_hotkey('ctrl+alt+p')
+            except:
+                pass
+            
+            # ホットキーを登録
+            keyboard.add_hotkey('ctrl+alt+p', lambda: toggle_proxy(icon))
+            print("ショートカットキー (Ctrl+Alt+P) を登録しました")
+        except Exception as e:
+            print(f"ショートカットキーの登録に失敗しました: {e}")
+    
+    # 初回登録
+    register_hotkey()
+    
+    # 1分ごとに再登録
+    while True:
+        try:
+            time.sleep(30)  # 30秒待機
+            register_hotkey()
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            print(f"ショートカットキーの再登録中にエラーが発生しました: {e}")
+            time.sleep(30)  # エラーが発生しても30秒後に再試行
 
 # 設定ダイアログクラス
 class ProxySettingsDialog:
