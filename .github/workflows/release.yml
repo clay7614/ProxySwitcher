@@ -10,30 +10,38 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: write
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
 
-    - name: Archive executables for release
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build Standard (Self-Contained)
+      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o bin/Publish/Standard
+
+    - name: Build Lightweight (Framework-Dependent)
+      run: dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin/Publish/Lightweight
+
+    - name: Package Assets
       shell: pwsh
       run: |
-        mkdir -p release_assets
+        mkdir release_assets
         # Standard
-        $standardPath = "bin/Publish/Standard/ProxySwitcher.exe"
-        Compress-Archive -Path $standardPath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Standard.zip" -Force
-        
+        Compress-Archive -Path bin/Publish/Standard/* -DestinationPath "release_assets/ProxySwitcher_${env:GITHUB_REF_NAME}_Standard.zip" -Force
         # Lightweight
-        $LightweightPath = "bin/Publish/Lightweight/ProxySwitcher.exe"
-        Compress-Archive -Path $LightweightPath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Lightweight.zip" -Force
+        Compress-Archive -Path bin/Publish/Lightweight/* -DestinationPath "release_assets/ProxySwitcher_${env:GITHUB_REF_NAME}_Lightweight.zip" -Force
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          release_assets/ProxySwitcher_v2.0.0_Standard.zip
-          release_assets/ProxySwitcher_v2.0.0_Lightweight.zip
+          release_assets/*.zip
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
