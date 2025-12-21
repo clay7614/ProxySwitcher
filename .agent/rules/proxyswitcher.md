@@ -1,6 +1,5 @@
 ---
 trigger: always_on
-glob: "**/*.cs"
 description: ProxySwitcherのプロジェクトコンテキストと開発ルール
 ---
 
