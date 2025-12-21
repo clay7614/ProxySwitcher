@@ -35,3 +35,22 @@ ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素�
 - すべての出力、説明、ドキュメントは日本語。文字・コメントも日本語。
 - 絵文字の使用は厳禁。
 - コミットプレフィックスルール（fix, add, update 等）を遵守。
+
+## 6. ビルドと出力
+本プロジェクトでは、常に以下の2種類の実行ファイルが生成されます。
+
+| 種類 | 出力先 | サイズ | 特徴 |
+| :--- | :--- | :--- | :--- |
+| **通常版 (Standalone)** | `bin\Publish\Standalone\ProxySwitcher.exe` | 約48MB | ランタイム内蔵。これ1つで動作。 |
+| **軽量版 (Dependent)** | `bin\Publish\Dependent\ProxySwitcher.exe` | 約0.2MB | ランタイム未内蔵。.NET 9 Desktop Runtimeが必要。 |
+
+### ビルドコマンド
+```powershell
+# 通常版
+dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o bin\Publish\Standalone
+
+# 軽量版
+dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin\Publish\Dependent
+```
+"@
+Add-Content -Path ".agent/rules/proxyswitcher.md" -Value $content
