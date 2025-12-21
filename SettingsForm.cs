@@ -25,9 +25,17 @@ public class SettingsForm : Form
 
     private void InitializeComponent()
     {
-        this.Text = "ProxySwitcher 設定";
+        this.Font = new Font("Yu Gothic UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+        this.Text = "設定";
         this.Size = new Size(420, 500); // サイズに余裕を持たせる
-        this.Icon = Program.CreateStatusIcon(ProxyManager.IsProxyEnabled()); // アイコン設定
+        try
+        {
+            this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+        }
+        catch
+        {
+            this.Icon = Program.CreateStatusIcon(ProxyManager.IsProxyEnabled());
+        }
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
         this.MaximizeBox = false;
         this.MinimizeBox = false;
@@ -53,7 +61,7 @@ public class SettingsForm : Form
         _addButton = new Button() { Text = "追加", Left = 290, Top = 280, Width = 90, Height = 35 };
         _addButton.Click += AddButton_Click;
 
-        _wifiAutoCheckBox = new CheckBox() { Text = "指定WiFi接続時に自動でON/OFFを切り替える", Left = 20, Top = 325, Width = 380, Height = 30, Checked = _config.WifiAutomationEnabled };
+        _wifiAutoCheckBox = new CheckBox() { Text = "指定SSID接続時に自動でON/OFFを切り替える", Left = 20, Top = 325, Width = 380, Height = 30, Checked = _config.WifiAutomationEnabled };
 
         _autostartCheckBox = new CheckBox() { Text = "Windows起動時に自動実行する", Left = 20, Top = 360, Width = 380, Height = 30, Checked = AutoStartManager.IsAutoStartEnabled() };
 
@@ -97,7 +105,7 @@ public class SettingsForm : Form
             
             if (ssids.Count == 0)
             {
-                MessageBox.Show("WiFi SSIDが見つかりませんでした。インターフェースが有効か確認してください。", "通知", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("SSIDが見つかりませんでした。インターフェースが有効か確認してください。", "通知", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
         catch (Exception ex)
@@ -142,7 +150,7 @@ public class SettingsForm : Form
         
         AutoStartManager.SetAutoStart(_autostartCheckBox.Checked);
 
-        MessageBox.Show("設定を保存しました。可能であれば、現在のネットワーク接続状況を確認し、自動適用を開始します。", "通知", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("設定を保存しました。現在のネットワーク接続状況を確認し、自動適用を開始します。", "通知", MessageBoxButtons.OK, MessageBoxIcon.Information);
         this.Close();
     }
 }

@@ -1,0 +1,41 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#2d3436;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#14191e;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="node1Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00b894;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#006450;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="node2Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#0984e3;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#054696;stop-opacity:1" />
+        </linearGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" />
+            <feOffset dx="2" dy="2" result="offsetblur" />
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.5" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+    
+    <!-- Background -->
+    <rect x="20" y="20" width="216" height="216" rx="48" fill="url(#bgGrad)" />
+    <rect x="20" y="20" width="216" height="216" rx="48" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+
+    <!-- Connection Line -->
+    <path d="M 85 165 C 128 165, 128 91, 171 91" stroke="white" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.9" />
+    
+    <!-- Nodes -->
+    <circle cx="85" cy="165" r="28" fill="url(#node1Grad)" filter="url(#shadow)" />
+    <circle cx="171" cy="91" r="28" fill="url(#node2Grad)" filter="url(#shadow)" />
+    
+    <!-- Center Switch Accent -->
+    <circle cx="128" cy="128" r="10" fill="white" opacity="0.8" />
+</svg>
