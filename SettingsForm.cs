@@ -28,14 +28,9 @@ public class SettingsForm : Form
         this.Font = new Font("Yu Gothic UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
         this.Text = "設定";
         this.Size = new Size(420, 500); // サイズに余裕を持たせる
-        try
-        {
+        try {
             this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-        }
-        catch
-        {
-            this.Icon = Program.CreateStatusIcon(ProxyManager.IsProxyEnabled());
-        }
+        } catch { /* Fallback or ignore */ }
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
         this.MaximizeBox = false;
         this.MinimizeBox = false;
