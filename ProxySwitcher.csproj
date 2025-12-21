@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>app.ico</ApplicationIcon>
     
     <!-- 単一ファイル発行の設定 -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
