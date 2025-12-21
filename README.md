@@ -20,14 +20,6 @@
 - **.NET 9 ランタイム**が必要です（軽量版を使用する場合）。
 - ビルド済みの `ProxySwitcher.exe` を任意の場所に配置して実行してください。
 
-#### ビルド方法 (開発者向け)
-```powershell
-# 1. 完結型 (サイズ大: 約48MB, ランタイム不要)
-dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o bin\Publish\Standalone
-
-# 2. 軽量版 (サイズ小: 約0.2MB, ランタイム必須)
-dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin\Publish\Dependent
-```
 
 ### 2. 基本的な操作
 - **プロキシの切り替え**: 
