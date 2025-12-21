@@ -1,4 +1,5 @@
 /build
 /build/ProxySwitcher
-bin/
+bin/*
+!bin/Publish/
 obj/
