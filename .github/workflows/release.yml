@@ -32,16 +32,28 @@ jobs:
       shell: pwsh
       run: |
         mkdir release_assets
+        $tag = $env:GITHUB_REF_NAME
+        
         # Standard
-        Compress-Archive -Path bin/Publish/Standard/* -DestinationPath "release_assets/ProxySwitcher_${env:GITHUB_REF_NAME}_Standard.zip" -Force
+        $stdExe = "bin/Publish/Standard/ProxySwitcher.exe"
+        $stdDestExe = "release_assets/ProxySwitcher_${tag}_Standard.exe"
+        Copy-Item $stdExe $stdDestExe
+        Compress-Archive -Path $stdDestExe -DestinationPath "release_assets/ProxySwitcher_${tag}_Standard.zip" -Force
+        
         # Lightweight
-        Compress-Archive -Path bin/Publish/Lightweight/* -DestinationPath "release_assets/ProxySwitcher_${env:GITHUB_REF_NAME}_Lightweight.zip" -Force
+        $lwExe = "bin/Publish/Lightweight/ProxySwitcher.exe"
+        $lwDestExe = "release_assets/ProxySwitcher_${tag}_Lightweight.exe"
+        Copy-Item $lwExe $lwDestExe
+        Compress-Archive -Path $lwDestExe -DestinationPath "release_assets/ProxySwitcher_${tag}_Lightweight.zip" -Force
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          release_assets/*.zip
+          release_assets/ProxySwitcher_${{ github.ref_name }}_Standard.exe
+          release_assets/ProxySwitcher_${{ github.ref_name }}_Standard.zip
+          release_assets/ProxySwitcher_${{ github.ref_name }}_Lightweight.exe
+          release_assets/ProxySwitcher_${{ github.ref_name }}_Lightweight.zip
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
