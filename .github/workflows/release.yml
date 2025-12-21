@@ -28,13 +28,16 @@ jobs:
 
     - name: Build Lightweight (Framework-Dependent)
       run: |
-        dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin/Publish/Lightweight
+        dotnet publish -c Release -r win-x64 --self-contained false /p:SelfContained=false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin/Publish/Lightweight
 
     - name: Package Assets
       shell: pwsh
       run: |
         mkdir release_assets
         $tag = $env:GITHUB_REF_NAME
+        
+        echo "Checking file sizes..."
+        ls -Recurse bin/Publish | Select-Object FullName, Length
         
         # Standard
         $stdExe = "bin/Publish/Standard/ProxySwitcher.exe"
