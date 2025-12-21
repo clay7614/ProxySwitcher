@@ -52,7 +52,7 @@ public static class ProxyManager
         }
         catch (Exception ex)
         {
-            System.Windows.Forms.MessageBox.Show($"プロキシ設定の変更に失敗しました: {ex.Message}", "エラー", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+            System.Windows.Forms.MessageBox.Show($"設定の変更に失敗しました: {ex.Message}", "エラー", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         }
     }
 }

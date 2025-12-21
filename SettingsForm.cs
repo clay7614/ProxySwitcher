@@ -13,6 +13,8 @@ public class SettingsForm : Form
     private Button _saveButton = null!;
     private Button _cancelButton = null!;
     private Button _scanButton = null!;
+    private TextBox _manualSsidTextBox = null!;
+    private Button _addButton = null!;
     private AppConfig _config;
 
     public SettingsForm()
@@ -24,18 +26,18 @@ public class SettingsForm : Form
     private void InitializeComponent()
     {
         this.Text = "ProxySwitcher 設定";
-        this.Size = new Size(400, 450); // 高さを 350 -> 450 に拡大
+        this.Size = new Size(420, 500); // サイズに余裕を持たせる
         this.Icon = Program.CreateStatusIcon(ProxyManager.IsProxyEnabled()); // アイコン設定
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
         this.MaximizeBox = false;
         this.MinimizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
 
-        Label label = new Label() { Text = "プロキシサーバー (host:port):", Left = 20, Top = 20, Width = 200 };
-        _serverTextBox = new TextBox() { Left = 20, Top = 45, Width = 340, Text = _config.ProxyServer };
+        Label label = new Label() { Text = "プロキシサーバー (host:port):", Left = 20, Top = 20, Width = 300, Height = 25 };
+        _serverTextBox = new TextBox() { Left = 20, Top = 50, Width = 360, Text = _config.ProxyServer };
 
-        Label ssidLabel = new Label() { Text = "対象のWiFi (チェックしたWiFiでプロキシON):", Left = 20, Top = 85, Width = 300 };
-        _ssidListBox = new CheckedListBox() { Left = 20, Top = 110, Width = 260, Height = 150 }; // 高さ調整
+        Label ssidLabel = new Label() { Text = "対象のWiFi (チェックしたWiFiでプロキシON):", Left = 20, Top = 90, Width = 350, Height = 25 };
+        _ssidListBox = new CheckedListBox() { Left = 20, Top = 120, Width = 260, Height = 140 };
         
         // 保存されているSSIDを追加してチェックを入れる
         foreach (var ssid in _config.TargetSSIDs)
@@ -43,17 +45,22 @@ public class SettingsForm : Form
             _ssidListBox.Items.Add(ssid, true);
         }
 
-        _scanButton = new Button() { Text = "スキャン", Left = 290, Top = 110, Width = 80 };
+        _scanButton = new Button() { Text = "スキャン", Left = 290, Top = 120, Width = 90, Height = 35 };
         _scanButton.Click += ScanButton_Click;
 
-        _wifiAutoCheckBox = new CheckBox() { Text = "指定WiFi接続時に自動でON/OFFを切り替える", Left = 20, Top = 280, Width = 350, Checked = _config.WifiAutomationEnabled };
+        Label manualLabel = new Label() { Text = "手動追加:", Left = 20, Top = 285, Width = 70, Height = 25 };
+        _manualSsidTextBox = new TextBox() { Left = 95, Top = 282, Width = 185 };
+        _addButton = new Button() { Text = "追加", Left = 290, Top = 280, Width = 90, Height = 35 };
+        _addButton.Click += AddButton_Click;
 
-        _autostartCheckBox = new CheckBox() { Text = "Windows起動時に自動実行する", Left = 20, Top = 310, Width = 300, Checked = AutoStartManager.IsAutoStartEnabled() };
+        _wifiAutoCheckBox = new CheckBox() { Text = "指定WiFi接続時に自動でON/OFFを切り替える", Left = 20, Top = 325, Width = 380, Height = 30, Checked = _config.WifiAutomationEnabled };
 
-        _saveButton = new Button() { Text = "保存", Left = 200, Top = 360, Width = 80, Height = 32 };
+        _autostartCheckBox = new CheckBox() { Text = "Windows起動時に自動実行する", Left = 20, Top = 360, Width = 380, Height = 30, Checked = AutoStartManager.IsAutoStartEnabled() };
+
+        _saveButton = new Button() { Text = "保存", Left = 210, Top = 410, Width = 90, Height = 35 };
         _saveButton.Click += SaveButton_Click;
 
-        _cancelButton = new Button() { Text = "キャンセル", Left = 290, Top = 360, Width = 80, Height = 32 };
+        _cancelButton = new Button() { Text = "キャンセル", Left = 310, Top = 410, Width = 90, Height = 35 };
         _cancelButton.Click += (s, e) => this.Close();
 
         this.Controls.Add(label);
@@ -61,6 +68,9 @@ public class SettingsForm : Form
         this.Controls.Add(ssidLabel);
         this.Controls.Add(_ssidListBox);
         this.Controls.Add(_scanButton);
+        this.Controls.Add(manualLabel);
+        this.Controls.Add(_manualSsidTextBox);
+        this.Controls.Add(_addButton);
         this.Controls.Add(_wifiAutoCheckBox);
         this.Controls.Add(_autostartCheckBox);
         this.Controls.Add(_saveButton);
@@ -98,6 +108,23 @@ public class SettingsForm : Form
         {
             _scanButton.Enabled = true;
             _scanButton.Text = "スキャン";
+        }
+    }
+
+    private void AddButton_Click(object? sender, EventArgs e)
+    {
+        string ssid = _manualSsidTextBox.Text.Trim();
+        if (!string.IsNullOrEmpty(ssid))
+        {
+            if (!_ssidListBox.Items.Contains(ssid))
+            {
+                _ssidListBox.Items.Add(ssid, true);
+                _manualSsidTextBox.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("このSSIDは既に追加されています。", "通知", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 

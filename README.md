@@ -3,7 +3,7 @@
 ![Platform-Windows](https://img.shields.io/badge/Platform-Windows-blue.svg)
 ![Framework-.NET9](https://img.shields.io/badge/Framework-.NET%209-purple.svg)
 
-**ProxySwitcher** は、Windows のプロキシ設定をタスクトレイから瞬時に切り替えられる、極めて軽量な常駐型アプリケーションです。C# (.NET 9) で一から再構築され、高いパフォーマンスと低リソース消費を実現しています。
+**ProxySwitcher** は、Windows のプロキシ設定をタスクトレイから切り替えられる、軽量な常駐型アプリケーションです。
 
 ## 特徴
 
@@ -38,17 +38,7 @@
 |---|---|
 | `Ctrl + Alt + P` | プロキシの状態をトグル（ON ⇔ OFF） |
 
-## ⚙️ システム要件
+## システム要件
 
 - **OS**: Windows 10 / 11
 - **ランタイム**: .NET 9
-
-## 🔧 ビルド方法
-
-```powershell
-dotnet build -c Release
-```
-
----
-
-💡 **ヒント**: ネットワーク環境が頻繁に変わるノート PC ユーザーに最適です。

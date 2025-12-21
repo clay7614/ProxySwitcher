@@ -50,28 +50,25 @@ public class WifiWatcher
             {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.GetEncoding(932) // 日本語環境（Shift-JIS）への対応検討
+                CreateNoWindow = true
+                // エンコーディング指定を削除してOSデフォルトに任せる
             };
 
             using Process? process = Process.Start(psi);
             if (process != null)
             {
                 string output = process.StandardOutput.ReadToEnd();
-                // より柔軟な正規表現でSSIDを抽出
                 var lines = output.Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var line in lines)
                 {
-                    if (line.Contains(" SSID") && line.Contains(":"))
+                    // "SSID" で始まり、かつ "BSSID" ではない行を探す
+                    string trimmedLine = line.Trim();
+                    if (trimmedLine.StartsWith("SSID") && !trimmedLine.StartsWith("BSSID") && trimmedLine.Contains(":"))
                     {
-                        var parts = line.Split(':');
+                        var parts = trimmedLine.Split(new[] { ':' }, 2); // 最初のコロンで分割
                         if (parts.Length >= 2)
                         {
-                            string ssid = parts[1].Trim();
-                            if (!string.IsNullOrEmpty(ssid) && !line.Contains("BSSID"))
-                            {
-                                return ssid;
-                            }
+                            return parts[1].Trim();
                         }
                     }
                 }

@@ -35,7 +35,7 @@ internal static class Program
         _wifiWatcher = new WifiWatcher();
         _wifiWatcher.AutoProxyChanged += (newStatus) => {
             UpdateTray(newStatus);
-            _trayIcon.ShowBalloonTip(3000, "ProxySwitcher", $"SSID判定によりプロキシを{(newStatus ? "ON" : "OFF")}に自動切替しました。", ToolTipIcon.Info);
+            _trayIcon.ShowBalloonTip(3000, "ProxySwitcher", $"プロキシを{(newStatus ? "ON" : "OFF")}に自動切替しました。", ToolTipIcon.Info);
         };
         _wifiWatcher.CheckWifiAndApplyProxy();
 

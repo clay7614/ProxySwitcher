@@ -45,7 +45,7 @@ public static class AutoStartManager
         }
         catch (Exception ex)
         {
-             System.Windows.Forms.MessageBox.Show($"自動起動設定の変更に失敗しました: {ex.Message}", "警告", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
+             System.Windows.Forms.MessageBox.Show($"設定の変更に失敗しました: {ex.Message}", "警告", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Warning);
         }
     }
 }
