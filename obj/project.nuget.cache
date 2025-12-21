@@ -1,13 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "oZKjO+BtCwM=",
+  "dgSpecHash": "YMAdrBYvaDI=",
   "success": true,
   "projectFilePath": "C:\\Users\\Tangeken\\Documents\\GitHub\\ProxySwitcher\\ProxySwitcher.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Tangeken\\.nuget\\packages\\microsoft.net.illink.tasks\\9.0.6\\microsoft.net.illink.tasks.9.0.6.nupkg.sha512",
-    "C:\\Users\\Tangeken\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\9.0.6\\microsoft.netcore.app.runtime.win-x64.9.0.6.nupkg.sha512",
-    "C:\\Users\\Tangeken\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\9.0.6\\microsoft.windowsdesktop.app.runtime.win-x64.9.0.6.nupkg.sha512",
-    "C:\\Users\\Tangeken\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\9.0.6\\microsoft.aspnetcore.app.runtime.win-x64.9.0.6.nupkg.sha512"
+    "C:\\Users\\Tangeken\\.nuget\\packages\\microsoft.net.illink.tasks\\9.0.6\\microsoft.net.illink.tasks.9.0.6.nupkg.sha512"
   ],
   "logs": []
 }
