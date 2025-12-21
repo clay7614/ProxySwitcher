@@ -1,6 +1,15 @@
-/build
-/build/ProxySwitcher
+# Build artifacts
 bin/*
 !bin/Publish/
 obj/
-/obj
+
+# IDE and Tooling
+.vs/
+.vscode/
+.agent/
+.github/
+*.user
+
+# Others
+.DS_Store
+Thumbs.db
