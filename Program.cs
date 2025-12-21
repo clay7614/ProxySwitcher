@@ -8,6 +8,7 @@ internal static class Program
 {
     private static NotifyIcon? _trayIcon;
     private static HotKeyHandler? _hotKeyHandler;
+    private static WifiWatcher? _wifiWatcher;
     private static AppConfig _config = new();
 
     [STAThread]
@@ -30,7 +31,24 @@ internal static class Program
         _hotKeyHandler = new HotKeyHandler();
         _hotKeyHandler.HotKeyPressed += ToggleProxy;
 
+        // WiFi監視の開始
+        _wifiWatcher = new WifiWatcher();
+        _wifiWatcher.AutoProxyChanged += (newStatus) => {
+            UpdateTray(newStatus);
+            _trayIcon.ShowBalloonTip(3000, "ProxySwitcher", $"SSID判定によりプロキシを{(newStatus ? "ON" : "OFF")}に自動切替しました。", ToolTipIcon.Info);
+        };
+        _wifiWatcher.CheckWifiAndApplyProxy();
+
         Application.Run();
+    }
+
+    private static void UpdateTray(bool enabled)
+    {
+        _trayIcon!.Icon = CreateStatusIcon(enabled);
+        if (_trayIcon.ContextMenuStrip?.Items["ToggleItem"] is ToolStripMenuItem item)
+        {
+            item.Text = enabled ? "プロキシをOFFにする" : "プロキシをONにする";
+        }
     }
 
     private static Icon CreateStatusIcon(bool enabled)
@@ -87,14 +105,8 @@ internal static class Program
         _config = AppConfig.Load(); // 最新の設定を読み込む
         ProxyManager.SetProxy(newStatus, _config.ProxyServer);
         
-        // アイコンとメニューの更新
-        _trayIcon!.Icon = CreateStatusIcon(newStatus);
-        
-        if (_trayIcon.ContextMenuStrip?.Items["ToggleItem"] is ToolStripMenuItem item)
-        {
-            item.Text = newStatus ? "プロキシをOFFにする" : "プロキシをONにする";
-        }
+        UpdateTray(newStatus);
 
-        _trayIcon.ShowBalloonTip(2000, "ProxySwitcher", $"プロキシを{(newStatus ? "ON" : "OFF")}にしました。", ToolTipIcon.Info);
+        _trayIcon!.ShowBalloonTip(2000, "ProxySwitcher", $"プロキシを{(newStatus ? "ON" : "OFF")}にしました。", ToolTipIcon.Info);
     }
 }
