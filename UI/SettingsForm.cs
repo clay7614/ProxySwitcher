@@ -1,8 +1,12 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Threading.Tasks;
+using ProxySwitcher.Managers;
+using ProxySwitcher.Models;
+using ProxySwitcher.Utilities;
 
-namespace ProxySwitcher;
+namespace ProxySwitcher.UI;
 
 public class SettingsForm : Form
 {
@@ -25,7 +29,7 @@ public class SettingsForm : Form
 
     private void InitializeComponent()
     {
-        this.Font = new Font("Yu Gothic UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+        this.Font = UIConstants.DefaultFont;
         this.Text = "設定";
         this.Size = new Size(420, 500); // サイズに余裕を持たせる
         try {

@@ -1,18 +1,12 @@
 using System;
-using System.Runtime.InteropServices;
 using Microsoft.Win32;
+using ProxySwitcher.Infrastructure;
 
-namespace ProxySwitcher;
+namespace ProxySwitcher.Managers;
 
 public static class ProxyManager
 {
     private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings";
-
-    [DllImport("wininet.dll", SetLastError = true)]
-    private static extern bool InternetSetOption(IntPtr hInternet, int dwOption, IntPtr lpBuffer, int dwBufferLength);
-
-    private const int INTERNET_OPTION_SETTINGS_CHANGED = 39;
-    private const int INTERNET_OPTION_REFRESH = 37;
 
     public static bool IsProxyEnabled()
     {
@@ -45,9 +39,9 @@ public static class ProxyManager
                     key.SetValue("ProxyServer", server, RegistryValueKind.String);
                 }
                 
-                // 設定の即時反映
-                InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
-                InternetSetOption(IntPtr.Zero, INTERNET_OPTION_REFRESH, IntPtr.Zero, 0);
+                // 設定の即時反映 (NativeMethods 経由)
+                NativeMethods.InternetSetOption(IntPtr.Zero, NativeMethods.INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
+                NativeMethods.InternetSetOption(IntPtr.Zero, NativeMethods.INTERNET_OPTION_REFRESH, IntPtr.Zero, 0);
             }
         }
         catch (Exception ex)
