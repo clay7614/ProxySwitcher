@@ -22,7 +22,7 @@ public class WifiWatcher
         try
         {
             var config = AppConfig.Load();
-            if (!config.WifiAutomationEnabled || string.IsNullOrEmpty(config.TargetSSID))
+            if (!config.WifiAutomationEnabled || config.TargetSSIDs.Count == 0)
                 return;
 
             string currentSSID = GetCurrentSSID();
