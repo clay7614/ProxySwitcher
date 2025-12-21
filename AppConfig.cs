@@ -8,7 +8,7 @@ public class AppConfig
 {
     public string ProxyServer { get; set; } = "proxy.maizuru-ct.ac.jp:8080";
     public bool UseProxyForLocal { get; set; } = false;
-    public List<string> TargetSSIDs { get; set; } = new();
+    public List<string> TargetSSIDs { get; set; } = new() { "MCSTUDENT" };
     public bool WifiAutomationEnabled { get; set; } = false;
 
     private static readonly string ConfigPath = Path.Combine(
