@@ -44,7 +44,6 @@ public class AppConfig
                 Directory.CreateDirectory(directory);
             }
             string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
-            File.ReadAllText(ConfigPath); // ダミー
             File.WriteAllText(ConfigPath, json);
         }
         catch

@@ -6,12 +6,12 @@ namespace ProxySwitcher;
 
 public class SettingsForm : Form
 {
-    private TextBox _serverTextBox;
-    private TextBox _ssidTextBox;
-    private CheckBox _autostartCheckBox;
-    private CheckBox _wifiAutoCheckBox;
-    private Button _saveButton;
-    private Button _cancelButton;
+    private TextBox _serverTextBox = null!;
+    private TextBox _ssidTextBox = null!;
+    private CheckBox _autostartCheckBox = null!;
+    private CheckBox _wifiAutoCheckBox = null!;
+    private Button _saveButton = null!;
+    private Button _cancelButton = null!;
     private AppConfig _config;
 
     public SettingsForm()
@@ -39,10 +39,10 @@ public class SettingsForm : Form
 
         _autostartCheckBox = new CheckBox() { Text = "Windows起動時に自動実行する", Left = 20, Top = 185, Width = 300, Checked = AutoStartManager.IsAutoStartEnabled() };
 
-        _saveButton = new Button() { Text = "保存", Left = 200, Top = 250, Width = 80 };
+        _saveButton = new Button() { Text = "保存", Left = 200, Top = 250, Width = 80, Height = 32 };
         _saveButton.Click += SaveButton_Click;
-
-        _cancelButton = new Button() { Text = "キャンセル", Left = 290, Top = 250, Width = 80 };
+ 
+        _cancelButton = new Button() { Text = "キャンセル", Left = 290, Top = 250, Width = 80, Height = 32 };
         _cancelButton.Click += (s, e) => this.Close();
 
         this.Controls.Add(label);
