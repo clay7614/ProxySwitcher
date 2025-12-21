@@ -5,7 +5,7 @@ description: ProxySwitcherのプロジェクトコンチE��ストと開発ルー
 
 # ProxySwitcher カスタムエージェント規則
 
-こ�Eファイルは、ProxySwitcher リポジトリを扱ぁEIエージェント�EためのガイドラインとプロジェクトコンチE��ストを定義します、E
+こ�Eファイルは、ProxySwitcher リポジトリを扱ぁE��ージェント�EためのガイドラインとプロジェクトコンチE��ストを定義します、E
 
 ## 1. プロジェクト概要E
 ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素早く�Eり替えるための軽量アプリケーションです、E# (.NET 9 / Windows Forms) で実裁E��れてぁE��す、E
@@ -21,18 +21,18 @@ ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素�
 - **ProxyManager.cs**: レジストリ (HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings) を操作。ProxyEnable と ProxyServer を制御し、Wininet API で反映、E
 - **WifiWatcher.cs**: ネットワーク変更を監視。SSID パ�Eスには netsh wlan show interfaces を使用、E
 - **WifiScanner.cs**: netsh wlan show networks を使用して周辺の SSID をリストアチE�E、E
-- **SettingsForm.cs**: 吁E��設宁EUI。文字見�Eれを防ぐため、フォント�E Yu Gothic UI 9pt 固定。コントロールの配置はマ�Eジンに余裕を持つこと、E
+- **SettingsForm.cs**: 吁E��設定UI。文字化けを防ぐため、フォント�E Yu Gothic UI 9pt 固定。コントロールの配置はマ�Eジンに余裕を持つこと、E
 - **AppConfig.cs**: %AppData%\ProxySwitcher\config.json に設定を永続化、E
 - **HotKeyHandler.cs**: Win32 API (RegisterHotKey) を使用したシスチE��全体でのショートカチE��、E
 - **AutoStartManager.cs**: レジストリの Run キーによる Windows 起動時実行�E管琁E��E
 
 ## 4. 開発時�E重要なルール
-- **UI調整**: 斁E���E見�Eれや重なりに非常に敏感なため、新しいコントロールを追加する際�E、余裕を持ったサイズ設計と明示皁E��フォント指定を行うこと、E
+- **UI調整**: 斁E���E崩れや重なりに非常に敏感なため、新しいコントロールを追加する際�E、余裕を持ったサイズ設計と明示皁E��フォント指定を行うこと、E
 - **斁E��コーチE*: netsh コマンド�E結果を読み取る際�E、シスチE��の標準文字コードを使用し、日本語環墁E��のパ�Eス崩れに注意すること、E
 - **非同期�E琁E*: WiFiスキャンなどの時間のかかる�E琁E�E、UIフリーズを防ぐために非同期化すること、E
 
 ## 5. 命名とスタイル
-- すべての出力、説明、ドキュメント�E日本語。文字�Eコメントも日本語、E
+- すべての出力、説明、ドキュメント�E日本語。コード�Eコメントも日本語、E
 - 絵斁E���E使用は厳禁、E
 - コミット�EレフィチE��スルール�E�Eix, add, update 等）を遵守、E
 
@@ -41,8 +41,8 @@ ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素�
 
 | 種顁E| 出力�E | サイズ | 特徴 |
 | :--- | :--- | :--- | :--- |
-| **通常牁E(Standard)** | `bin\Publish\Standard\ProxySwitcher.exe` | 紁E8MB | ランタイム冁E��。こめEつで動作、E|
-| **軽量版 (Dependent)** | `bin\Publish\Dependent\ProxySwitcher.exe` | 紁E.2MB | ランタイム未冁E��、ENET 9 Desktop Runtimeが忁E��、E|
+| **通常牁E(Standard)** | `bin\Publish\Standard\ProxySwitcher.exe` | 紁EMB | ランタイム冁E��。これ一つで動作、E|
+| **軽量版 (Lightweight)** | `bin\Publish\Lightweight\ProxySwitcher.exe` | 紁E.2MB | ランタイム未冁E��、ENET 9 Desktop Runtimeが忁E��、E|
 
 ### ビルドコマンチE
 ```powershell
@@ -50,7 +50,6 @@ ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素�
 dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o bin\Publish\Standard
 
 # 軽量版
-dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin\Publish\Dependent
+dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin\Publish\Lightweight
 ```
-"@
-Add-Content -Path ".agent/rules/proxyswitcher.md" -Value $content
+

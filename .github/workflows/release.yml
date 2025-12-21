@@ -24,8 +24,8 @@ jobs:
         Compress-Archive -Path $standardPath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Standard.zip" -Force
         
         # Lightweight
-        $dependentPath = "bin/Publish/Dependent/ProxySwitcher.exe"
-        Compress-Archive -Path $dependentPath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Lightweight.zip" -Force
+        $LightweightPath = "bin/Publish/Lightweight/ProxySwitcher.exe"
+        Compress-Archive -Path $LightweightPath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Lightweight.zip" -Force
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
@@ -36,3 +36,4 @@ jobs:
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
