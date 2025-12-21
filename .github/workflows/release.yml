@@ -22,12 +22,21 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
 
+    # --- Build Standard (Self-Contained) ---
     - name: Build Standard (Self-Contained)
       run: |
         dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o bin/Publish/Standard
 
+    # --- CLEANUP to prevent obj contamination ---
+    - name: Clean artifacts
+      run: |
+        dotnet clean
+        if (Test-Path obj) { Remove-Item -Path obj -Recurse -Force }
+
+    # --- Build Lightweight (Framework-Dependent) ---
     - name: Build Lightweight (Framework-Dependent)
       run: |
+        dotnet restore # Restore again since we deleted obj
         dotnet publish -c Release -r win-x64 --self-contained false /p:SelfContained=false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin/Publish/Lightweight
 
     - name: Package Assets
