@@ -48,8 +48,8 @@ public class SettingsForm : Form
         _scanButton = new Button() { Text = "スキャン", Left = 290, Top = 120, Width = 90, Height = 35 };
         _scanButton.Click += ScanButton_Click;
 
-        Label manualLabel = new Label() { Text = "手動追加:", Left = 20, Top = 285, Width = 70, Height = 25 };
-        _manualSsidTextBox = new TextBox() { Left = 95, Top = 282, Width = 185 };
+        Label manualLabel = new Label() { Text = "手動追加:", Left = 20, Top = 285, Width = 100, Height = 25 };
+        _manualSsidTextBox = new TextBox() { Left = 125, Top = 282, Width = 155 };
         _addButton = new Button() { Text = "追加", Left = 290, Top = 280, Width = 90, Height = 35 };
         _addButton.Click += AddButton_Click;
 
