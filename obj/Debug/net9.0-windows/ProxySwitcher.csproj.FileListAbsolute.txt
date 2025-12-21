@@ -1,0 +1,15 @@
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ProxySwitcher.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ProxySwitcher.AssemblyInfoInputs.cache
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ProxySwitcher.AssemblyInfo.cs
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ProxySwitcher.csproj.CoreCompileInputs.cache
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ProxySwitcher.sourcelink.json
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\bin\Debug\net9.0-windows\ProxySwitcher.exe
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\bin\Debug\net9.0-windows\ProxySwitcher.deps.json
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\bin\Debug\net9.0-windows\ProxySwitcher.runtimeconfig.json
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\bin\Debug\net9.0-windows\ProxySwitcher.dll
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\bin\Debug\net9.0-windows\ProxySwitcher.pdb
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ProxySwitcher.dll
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\refint\ProxySwitcher.dll
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ProxySwitcher.pdb
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ProxySwitcher.genruntimeconfig.cache
+C:\Users\Tangeken\Documents\GitHub\ProxySwitcher\obj\Debug\net9.0-windows\ref\ProxySwitcher.dll
