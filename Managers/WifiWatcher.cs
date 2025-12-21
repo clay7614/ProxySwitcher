@@ -10,7 +10,6 @@ namespace ProxySwitcher.Managers;
 public class WifiWatcher
 {
     private string _lastSsid = "";
-    private bool _isAutomationRunning = false;
     public event Action<bool>? AutoProxyChanged;
 
     public WifiWatcher()
