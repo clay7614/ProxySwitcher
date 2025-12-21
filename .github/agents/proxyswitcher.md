@@ -16,7 +16,7 @@ ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素�
 - **WiFiスキャン & 手動追加**: 周囲のネットワークをスキャンして選択、または SSID を手動入力してリスト登録。
 - **動的アイコン**: プロキシの ON/OFF 状態を反映したグラフィカルなアイコンを動的に生成。
 
-## 3. ディレクトリ・ファイル構成
+## 3. ディレクトリファイル構成
 - **Program.cs**: エントリポイント。トレイアイコン、コンテキストメニュー、ホットキーおよび監視クラスのライフサイクルを管理。
 - **ProxyManager.cs**: レジストリ (HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings) を操作。ProxyEnable と ProxyServer を制御し、Wininet API で反映。
 - **WifiWatcher.cs**: ネットワーク変更を監視。SSID パースには netsh wlan show interfaces を使用。
@@ -45,10 +45,13 @@ ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素�
 | **軽量版 (Lightweight)** | bin\Publish\Lightweight\ProxySwitcher.exe | 約0.2MB | ランタイム未内蔵、.NET 9 Desktop Runtimeが必要。 |
 
 ### ビルドコマンド
-```powershell
+`powershell
 # 通常版
 dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o bin\Publish\Standard
 
 # 軽量版
 dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin\Publish\Lightweight
-```
+`
+
+## 7. AIエージェントへの注意事項
+- **文字コードの厳守**: このファイルを編集する際は、必ず **UTF-8 (BOMなし)** で保存すること。Windows PowerShell のデフォルトの Set-Content 等を使用すると文字化けが発生し、AIエージェントの動作に支障をきたす可能性があるため、.NET の WriteAllText 等の適切なエンコーディング指定が可能な手段を用いること。
