@@ -1,55 +1,54 @@
 ---
 trigger: always_on
-description: ProxySwitcherのプロジェクトコンチE��ストと開発ルール
+description: ProxySwitcherのプロジェクトコンテキストと開発ルール
 ---
 
 # ProxySwitcher カスタムエージェント規則
 
-こ�Eファイルは、ProxySwitcher リポジトリを扱ぁE��ージェント�EためのガイドラインとプロジェクトコンチE��ストを定義します、E
+このファイルは、ProxySwitcher リポジトリを扱うエージェントのためのガイドラインとプロジェクトコンテキストを定義します。
 
-## 1. プロジェクト概要E
-ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素早く�Eり替えるための軽量アプリケーションです、E# (.NET 9 / Windows Forms) で実裁E��れてぁE��す、E
+## 1. プロジェクト概要
+ProxySwitcher は、Windows のプロキシ設定をタスクトレイから素早く切り替えるための軽量アプリケーションです。C# (.NET 9 / Windows Forms) で実装されています。
 
-## 2. コア機�E
-- **手動刁E��替ぁE*: タスクトレイメニューまた�Eホットキー (Ctrl + Alt + P) による即時�Eり替え、E
-- **WiFi連動�E動化**: 接続中の SSID が指定リストに含まれる場合、�E動的にプロキシを有効化、E
-- **WiFiスキャン & 手動追加**: 周囲のネットワークをスキャンして選択、また�E SSID を手動�E力してリスト登録、E
-- **動的アイコン**: プロキシの ON/OFF 状態を反映したグラフィカルなアイコンを動皁E��生�E、E
+## 2. コア機能
+- **手動切り替え**: タスクトレイメニューまたはホットキー (Ctrl + Alt + P) による即時切り替え。
+- **WiFi連動自動化**: 接続中の SSID が指定リストに含まれる場合、自動的にプロキシを有効化。
+- **WiFiスキャン & 手動追加**: 周囲のネットワークをスキャンして選択、または SSID を手動入力してリスト登録。
+- **動的アイコン**: プロキシの ON/OFF 状態を反映したグラフィカルなアイコンを動的に生成。
 
-## 3. チE��レクトリ・ファイル構�E
-- **Program.cs**: エントリポイント。トレイアイコン、コンチE��ストメニュー、�EチE��キーおよび監視クラスのライフサイクルを管琁E��E
-- **ProxyManager.cs**: レジストリ (HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings) を操作。ProxyEnable と ProxyServer を制御し、Wininet API で反映、E
-- **WifiWatcher.cs**: ネットワーク変更を監視。SSID パ�Eスには netsh wlan show interfaces を使用、E
-- **WifiScanner.cs**: netsh wlan show networks を使用して周辺の SSID をリストアチE�E、E
-- **SettingsForm.cs**: 吁E��設定UI。文字化けを防ぐため、フォント�E Yu Gothic UI 9pt 固定。コントロールの配置はマ�Eジンに余裕を持つこと、E
-- **AppConfig.cs**: %AppData%\ProxySwitcher\config.json に設定を永続化、E
-- **HotKeyHandler.cs**: Win32 API (RegisterHotKey) を使用したシスチE��全体でのショートカチE��、E
-- **AutoStartManager.cs**: レジストリの Run キーによる Windows 起動時実行�E管琁E��E
+## 3. ディレクトリ・ファイル構成
+- **Program.cs**: エントリポイント。トレイアイコン、コンテキストメニュー、ホットキーおよび監視クラスのライフサイクルを管理。
+- **ProxyManager.cs**: レジストリ (HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings) を操作。ProxyEnable と ProxyServer を制御し、Wininet API で反映。
+- **WifiWatcher.cs**: ネットワーク変更を監視。SSID パースには netsh wlan show interfaces を使用。
+- **WifiScanner.cs**: netsh wlan show networks を使用して周辺の SSID をリストアップ。
+- **SettingsForm.cs**: 各種設定UI。文字化けを防ぐため、フォントは Yu Gothic UI 9pt 固定。コントロールの配置はマージンに余裕を持つこと。
+- **AppConfig.cs**: %AppData%\ProxySwitcher\config.json に設定を永続化。
+- **HotKeyHandler.cs**: Win32 API (RegisterHotKey) を使用したシステム全体でのショートカット。
+- **AutoStartManager.cs**: レジストリの Run キーによる Windows 起動時実行の管理。
 
-## 4. 開発時�E重要なルール
-- **UI調整**: 斁E���E崩れや重なりに非常に敏感なため、新しいコントロールを追加する際�E、余裕を持ったサイズ設計と明示皁E��フォント指定を行うこと、E
-- **斁E��コーチE*: netsh コマンド�E結果を読み取る際�E、シスチE��の標準文字コードを使用し、日本語環墁E��のパ�Eス崩れに注意すること、E
-- **非同期�E琁E*: WiFiスキャンなどの時間のかかる�E琁E�E、UIフリーズを防ぐために非同期化すること、E
+## 4. 開発時の重要なルール
+- **UI調整**: 文字の崩れや重なりに非常に敏感なため、新しいコントロールを追加する際は、余裕を持ったサイズ設計と明示的なフォント指定を行うこと。
+- **文字コード**: netsh コマンドの結果を読み取る際は、システムの標準文字コードを使用し、日本語環境でのパース崩れに注意すること。
+- **非同期処理**: WiFiスキャンなどの時間のかかる処理は、UIフリーズを防ぐために非同期化すること。
 
 ## 5. 命名とスタイル
-- すべての出力、説明、ドキュメント�E日本語。コード�Eコメントも日本語、E
-- 絵斁E���E使用は厳禁、E
-- コミット�EレフィチE��スルール�E�Eix, add, update 等）を遵守、E
+- すべての出力、説明、ドキュメントは日本語。コードのコメントも日本語。
+- 絵文字の使用は厳禁。
+- コミットプレフィックスルール（fix, add, update 等）を遵守。
 
-## 6. ビルドと出劁E
-本プロジェクトでは、常に以下�E2種類�E実行ファイルが生成されます、E
+## 6. ビルドと出力
+本プロジェクトでは、常に以下の2種類の実行ファイルが生成されます。
 
-| 種顁E| 出力�E | サイズ | 特徴 |
+| 種類 | 出力先 | サイズ | 特徴 |
 | :--- | :--- | :--- | :--- |
-| **通常牁E(Standard)** | `bin\Publish\Standard\ProxySwitcher.exe` | 紁EMB | ランタイム冁E��。これ一つで動作、E|
-| **軽量版 (Lightweight)** | `bin\Publish\Lightweight\ProxySwitcher.exe` | 紁E.2MB | ランタイム未冁E��、ENET 9 Desktop Runtimeが忁E��、E|
+| **通常版 (Standard)** | bin\Publish\Standard\ProxySwitcher.exe | 約48MB | ランタイム内蔵。これ一つで動作。 |
+| **軽量版 (Lightweight)** | bin\Publish\Lightweight\ProxySwitcher.exe | 約0.2MB | ランタイム未内蔵、.NET 9 Desktop Runtimeが必要。 |
 
-### ビルドコマンチE
+### ビルドコマンド
 ```powershell
-# 通常牁E
+# 通常版
 dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o bin\Publish\Standard
 
 # 軽量版
 dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin\Publish\Lightweight
 ```
-
