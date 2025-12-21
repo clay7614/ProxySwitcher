@@ -19,9 +19,9 @@ jobs:
       shell: pwsh
       run: |
         mkdir -p release_assets
-        # Standalone
-        $standalonePath = "bin/Publish/Standalone/ProxySwitcher.exe"
-        Compress-Archive -Path $standalonePath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Standalone.zip" -Force
+        # Standard
+        $standardPath = "bin/Publish/Standard/ProxySwitcher.exe"
+        Compress-Archive -Path $standardPath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Standard.zip" -Force
         
         # Lightweight
         $dependentPath = "bin/Publish/Dependent/ProxySwitcher.exe"
@@ -31,7 +31,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          release_assets/ProxySwitcher_v2.0.0_Standalone.zip
+          release_assets/ProxySwitcher_v2.0.0_Standard.zip
           release_assets/ProxySwitcher_v2.0.0_Lightweight.zip
         generate_release_notes: true
       env:
