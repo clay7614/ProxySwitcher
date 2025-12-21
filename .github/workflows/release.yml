@@ -1,4 +1,4 @@
-name: Build and Release
+name: Release Local Builds
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  release:
     runs-on: windows-latest
     permissions:
       contents: write
@@ -14,60 +14,38 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
-
-    - name: Install dependencies
-      run: dotnet restore
-
-    # --- Build Standard (Self-Contained) ---
-    - name: Build Standard (Self-Contained)
-      run: |
-        dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o bin/Publish/Standard
-
-    # --- CLEANUP to prevent obj contamination ---
-    - name: Clean artifacts
-      run: |
-        dotnet clean
-        if (Test-Path obj) { Remove-Item -Path obj -Recurse -Force }
-
-    # --- Build Lightweight (Framework-Dependent) ---
-    - name: Build Lightweight (Framework-Dependent)
-      run: |
-        dotnet restore # Restore again since we deleted obj
-        dotnet publish -c Release -r win-x64 --self-contained false /p:SelfContained=false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin/Publish/Lightweight
-
     - name: Package Assets
       shell: pwsh
       run: |
         mkdir release_assets
         $tag = $env:GITHUB_REF_NAME
         
-        echo "Checking file sizes..."
-        ls -Recurse bin/Publish | Select-Object FullName, Length
-        
         # Standard
         $stdExe = "bin/Publish/Standard/ProxySwitcher.exe"
-        $stdDestExe = "release_assets/ProxySwitcher_${tag}_Standard.exe"
-        Copy-Item $stdExe $stdDestExe
-        Compress-Archive -Path $stdDestExe -DestinationPath "release_assets/ProxySwitcher_${tag}_Standard.zip" -Force
+        if (Test-Path $stdExe) {
+            $stdDestExe = "release_assets/ProxySwitcher_${tag}_Standard.exe"
+            Copy-Item $stdExe $stdDestExe
+            Compress-Archive -Path $stdDestExe -DestinationPath "release_assets/ProxySwitcher_${tag}_Standard.zip" -Force
+        } else {
+            Write-Error "Standard EXE not found at $stdExe"
+        }
         
         # Lightweight
         $lwExe = "bin/Publish/Lightweight/ProxySwitcher.exe"
-        $lwDestExe = "release_assets/ProxySwitcher_${tag}_Lightweight.exe"
-        Copy-Item $lwExe $lwDestExe
-        Compress-Archive -Path $lwDestExe -DestinationPath "release_assets/ProxySwitcher_${tag}_Lightweight.zip" -Force
+        if (Test-Path $lwExe) {
+            $lwDestExe = "release_assets/ProxySwitcher_${tag}_Lightweight.exe"
+            Copy-Item $lwExe $lwDestExe
+            Compress-Archive -Path $lwDestExe -DestinationPath "release_assets/ProxySwitcher_${tag}_Lightweight.zip" -Force
+        } else {
+             Write-Error "Lightweight EXE not found at $lwExe"
+        }
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          release_assets/ProxySwitcher_${{ github.ref_name }}_Standard.exe
-          release_assets/ProxySwitcher_${{ github.ref_name }}_Standard.zip
-          release_assets/ProxySwitcher_${{ github.ref_name }}_Lightweight.exe
-          release_assets/ProxySwitcher_${{ github.ref_name }}_Lightweight.zip
+          release_assets/*.exe
+          release_assets/*.zip
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
