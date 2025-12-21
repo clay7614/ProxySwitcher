@@ -15,19 +15,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Rename executables for release
+    - name: Archive executables for release
       shell: pwsh
       run: |
         mkdir -p release_assets
-        Copy-Item bin/Publish/Standalone/ProxySwitcher.exe release_assets/ProxySwitcher_Standalone.exe
-        Copy-Item bin/Publish/Dependent/ProxySwitcher.exe release_assets/ProxySwitcher_Lightweight.exe
+        # Standalone
+        $standalonePath = "bin/Publish/Standalone/ProxySwitcher.exe"
+        Compress-Archive -Path $standalonePath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Standalone.zip" -Force
+        
+        # Lightweight
+        $dependentPath = "bin/Publish/Dependent/ProxySwitcher.exe"
+        Compress-Archive -Path $dependentPath -DestinationPath "release_assets/ProxySwitcher_v2.0.0_Lightweight.zip" -Force
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          release_assets/ProxySwitcher_Standalone.exe
-          release_assets/ProxySwitcher_Lightweight.exe
+          release_assets/ProxySwitcher_v2.0.0_Standalone.zip
+          release_assets/ProxySwitcher_v2.0.0_Lightweight.zip
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
