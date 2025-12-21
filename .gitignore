@@ -13,3 +13,4 @@ obj/
 # Others
 .DS_Store
 Thumbs.db
+/bin
