@@ -8,15 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>app.ico</ApplicationIcon>
     
-    <!-- 単一ファイル発行の設定 -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <PublishTrimmed>false</PublishTrimmed>
-    <!-- 圧縮を有効にしてファイルサイズを削減 -->
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <!-- dllのシンボルを含めないようにしてサイズを縮小 -->
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>

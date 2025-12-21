@@ -23,10 +23,12 @@ jobs:
       run: dotnet restore
 
     - name: Build Standard (Self-Contained)
-      run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o bin/Publish/Standard
+      run: |
+        dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true -o bin/Publish/Standard
 
     - name: Build Lightweight (Framework-Dependent)
-      run: dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin/Publish/Lightweight
+      run: |
+        dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=false -o bin/Publish/Lightweight
 
     - name: Package Assets
       shell: pwsh
