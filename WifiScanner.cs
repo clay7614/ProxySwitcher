@@ -16,8 +16,8 @@ public class WifiScanner
             {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true,
-                StandardOutputEncoding = System.Text.Encoding.GetEncoding(932)
+                CreateNoWindow = true
+                // エンコーディング指定を削除してOSデフォルトに任せる
             };
 
             using Process? process = Process.Start(psi);
