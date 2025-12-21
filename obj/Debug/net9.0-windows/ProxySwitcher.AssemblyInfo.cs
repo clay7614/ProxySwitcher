@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProxySwitcher")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e5b5019e9d2bfff078f7c7e9edd1c24344a3882f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4169cff26bdce4b841a9b642615f3f30e942c4bf")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProxySwitcher")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProxySwitcher")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

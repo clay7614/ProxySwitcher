@@ -7,11 +7,12 @@ namespace ProxySwitcher;
 public class SettingsForm : Form
 {
     private TextBox _serverTextBox = null!;
-    private TextBox _ssidTextBox = null!;
+    private CheckedListBox _ssidListBox = null!;
     private CheckBox _autostartCheckBox = null!;
     private CheckBox _wifiAutoCheckBox = null!;
     private Button _saveButton = null!;
     private Button _cancelButton = null!;
+    private Button _scanButton = null!;
     private AppConfig _config;
 
     public SettingsForm()
@@ -24,6 +25,7 @@ public class SettingsForm : Form
     {
         this.Text = "ProxySwitcher 設定";
         this.Size = new Size(400, 350);
+        this.Icon = Program.CreateStatusIcon(ProxyManager.IsProxyEnabled()); // アイコン設定
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
         this.MaximizeBox = false;
         this.MinimizeBox = false;
@@ -32,33 +34,74 @@ public class SettingsForm : Form
         Label label = new Label() { Text = "プロキシサーバー (host:port):", Left = 20, Top = 20, Width = 200 };
         _serverTextBox = new TextBox() { Left = 20, Top = 45, Width = 340, Text = _config.ProxyServer };
 
-        Label ssidLabel = new Label() { Text = "対象のWiFi SSID (自動切替用):", Left = 20, Top = 85, Width = 250 };
-        _ssidTextBox = new TextBox() { Left = 20, Top = 110, Width = 340, Text = _config.TargetSSID };
+        Label ssidLabel = new Label() { Text = "対象のWiFi (チェックしたWiFiでプロキシON):", Left = 20, Top = 85, Width = 300 };
+        _ssidListBox = new CheckedListBox() { Left = 20, Top = 110, Width = 260, Height = 120 };
+        
+        // 保存されているSSIDを追加してチェックを入れる
+        foreach (var ssid in _config.TargetSSIDs)
+        {
+            _ssidListBox.Items.Add(ssid, true);
+        }
 
-        _wifiAutoCheckBox = new CheckBox() { Text = "このWiFi接続時にプロキシを自動ONにする", Left = 20, Top = 145, Width = 350, Checked = _config.WifiAutomationEnabled };
+        _scanButton = new Button() { Text = "スキャン", Left = 290, Top = 110, Width = 80 };
+        _scanButton.Click += ScanButton_Click;
 
-        _autostartCheckBox = new CheckBox() { Text = "Windows起動時に自動実行する", Left = 20, Top = 185, Width = 300, Checked = AutoStartManager.IsAutoStartEnabled() };
+        _wifiAutoCheckBox = new CheckBox() { Text = "指定WiFi接続時に自動でON/OFFを切り替える", Left = 20, Top = 240, Width = 350, Checked = _config.WifiAutomationEnabled };
 
-        _saveButton = new Button() { Text = "保存", Left = 200, Top = 250, Width = 80, Height = 32 };
+        _autostartCheckBox = new CheckBox() { Text = "Windows起動時に自動実行する", Left = 20, Top = 270, Width = 300, Checked = AutoStartManager.IsAutoStartEnabled() };
+
+        _saveButton = new Button() { Text = "保存", Left = 200, Top = 310, Width = 80, Height = 32 };
         _saveButton.Click += SaveButton_Click;
- 
-        _cancelButton = new Button() { Text = "キャンセル", Left = 290, Top = 250, Width = 80, Height = 32 };
+
+        _cancelButton = new Button() { Text = "キャンセル", Left = 290, Top = 310, Width = 80, Height = 32 };
         _cancelButton.Click += (s, e) => this.Close();
 
         this.Controls.Add(label);
         this.Controls.Add(_serverTextBox);
         this.Controls.Add(ssidLabel);
-        this.Controls.Add(_ssidTextBox);
+        this.Controls.Add(_ssidListBox);
+        this.Controls.Add(_scanButton);
         this.Controls.Add(_wifiAutoCheckBox);
         this.Controls.Add(_autostartCheckBox);
         this.Controls.Add(_saveButton);
         this.Controls.Add(_cancelButton);
     }
 
+    private void ScanButton_Click(object? sender, EventArgs e)
+    {
+        _scanButton.Enabled = false;
+        _scanButton.Text = "待機中...";
+        
+        try
+        {
+            // 周囲のWiFiをスキャン
+            var scanner = new WifiScanner();
+            var ssids = scanner.GetAvailableSSIDs();
+
+            foreach (var ssid in ssids)
+            {
+                if (!_ssidListBox.Items.Contains(ssid))
+                {
+                    _ssidListBox.Items.Add(ssid, false);
+                }
+            }
+        }
+        finally
+        {
+            _scanButton.Enabled = true;
+            _scanButton.Text = "スキャン";
+        }
+    }
+
     private void SaveButton_Click(object? sender, EventArgs e)
     {
         _config.ProxyServer = _serverTextBox.Text.Trim();
-        _config.TargetSSID = _ssidTextBox.Text.Trim();
+        
+        _config.TargetSSIDs.Clear();
+        foreach (string item in _ssidListBox.CheckedItems)
+        {
+            _config.TargetSSIDs.Add(item);
+        }
         _config.WifiAutomationEnabled = _wifiAutoCheckBox.Checked;
         _config.Save();
         

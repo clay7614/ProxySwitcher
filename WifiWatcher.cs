@@ -11,23 +11,34 @@ public class WifiWatcher
 
     public WifiWatcher()
     {
-        NetworkChange.NetworkAddressChanged += (s, e) => CheckWifiAndApplyProxy();
+        NetworkChange.NetworkAddressChanged += (s, e) => {
+            // 接続完了まで少し待機して判定を行う（タイミングの余裕を持たせる）
+            Task.Delay(3000).ContinueWith(_ => CheckWifiAndApplyProxy());
+        };
     }
 
     public void CheckWifiAndApplyProxy()
     {
-        var config = AppConfig.Load();
-        if (!config.WifiAutomationEnabled || string.IsNullOrEmpty(config.TargetSSID))
-            return;
-
-        string currentSSID = GetCurrentSSID();
-        bool shouldBeEnabled = (currentSSID == config.TargetSSID);
-        bool currentStatus = ProxyManager.IsProxyEnabled();
-
-        if (shouldBeEnabled != currentStatus)
+        try
         {
-            ProxyManager.SetProxy(shouldBeEnabled, config.ProxyServer);
-            AutoProxyChanged?.Invoke(shouldBeEnabled);
+            var config = AppConfig.Load();
+            if (!config.WifiAutomationEnabled || string.IsNullOrEmpty(config.TargetSSID))
+                return;
+
+            string currentSSID = GetCurrentSSID();
+            bool shouldBeEnabled = (!string.IsNullOrEmpty(currentSSID) && 
+                                    config.TargetSSIDs.Any(ssid => ssid.Equals(currentSSID, StringComparison.OrdinalIgnoreCase)));
+            bool currentStatus = ProxyManager.IsProxyEnabled();
+
+            if (shouldBeEnabled != currentStatus)
+            {
+                ProxyManager.SetProxy(shouldBeEnabled, config.ProxyServer);
+                AutoProxyChanged?.Invoke(shouldBeEnabled);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"WiFi判定エラー: {ex.Message}");
         }
     }
 
@@ -39,22 +50,36 @@ public class WifiWatcher
             {
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.GetEncoding(932) // 日本語環境（Shift-JIS）への対応検討
             };
+
             using Process? process = Process.Start(psi);
             if (process != null)
             {
                 string output = process.StandardOutput.ReadToEnd();
-                Match match = Regex.Match(output, @"^\s+SSID\s+:\s+(.+)$", RegexOptions.Multiline);
-                if (match.Success)
+                // より柔軟な正規表現でSSIDを抽出
+                var lines = output.Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
                 {
-                    return match.Groups[1].Value.Trim();
+                    if (line.Contains(" SSID") && line.Contains(":"))
+                    {
+                        var parts = line.Split(':');
+                        if (parts.Length >= 2)
+                        {
+                            string ssid = parts[1].Trim();
+                            if (!string.IsNullOrEmpty(ssid) && !line.Contains("BSSID"))
+                            {
+                                return ssid;
+                            }
+                        }
+                    }
                 }
             }
         }
         catch
         {
-            // エラー時は空文字を返す
+            // netsh実行エラー時など
         }
         return string.Empty;
     }
