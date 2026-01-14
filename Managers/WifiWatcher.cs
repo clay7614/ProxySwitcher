@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ProxySwitcher.Models;
 
+using System.Net.NetworkInformation;
+
 namespace ProxySwitcher.Managers;
 
 public class WifiWatcher
@@ -14,8 +16,22 @@ public class WifiWatcher
 
     public WifiWatcher()
     {
-        // ネットワーク変更を監視するスレッドを開始
-        Task.Run(MonitorWifi);
+        // ネットワーク変更イベントを購読 (ポーリング廃止)
+        NetworkChange.NetworkAddressChanged += OnNetworkChanged;
+        NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
+        
+        // 初回チェック
+        CheckWifiAndApplyProxy();
+    }
+
+    private void OnNetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
+    {
+        CheckWifiAndApplyProxy();
+    }
+
+    private void OnNetworkChanged(object sender, EventArgs e)
+    {
+        CheckWifiAndApplyProxy();
     }
 
     public void CheckWifiAndApplyProxy()
@@ -23,35 +39,29 @@ public class WifiWatcher
         var config = AppConfig.Load();
         if (!config.WifiAutomationEnabled) return;
 
-        string currentSsid = GetCurrentSsid();
-        bool isTarget = config.TargetSSIDs.Contains(currentSsid);
-
-        if (ProxyManager.IsProxyEnabled() != isTarget)
+        // イベントは頻繁に発火するため、少し待機してからSSIDを取得しても良いが、
+        // 現状はシンプルに実行する。必要に応じてデバウンスを検討。
+        
+        try
         {
-            ProxyManager.SetProxy(isTarget, config.ProxyServer);
-            AutoProxyChanged?.Invoke(isTarget);
-        }
-    }
+            string currentSsid = GetCurrentSsid();
+            
+            // SSIDが変わっていない場合はスキップ (無駄なプロキシ設定を防ぐ)
+            if (currentSsid == _lastSsid && !string.IsNullOrEmpty(currentSsid)) return;
+            
+            _lastSsid = currentSsid;
+            bool isTarget = config.TargetSSIDs.Contains(currentSsid);
 
-    private async Task MonitorWifi()
-    {
-        while (true)
-        {
-            try
+            if (ProxyManager.IsProxyEnabled() != isTarget)
             {
-                var config = AppConfig.Load();
-                if (config.WifiAutomationEnabled)
-                {
-                    string currentSsid = GetCurrentSsid();
-                    if (currentSsid != _lastSsid)
-                    {
-                        _lastSsid = currentSsid;
-                        CheckWifiAndApplyProxy();
-                    }
-                }
+                ProxyManager.SetProxy(isTarget, config.ProxyServer);
+                AutoProxyChanged?.Invoke(isTarget);
             }
-            catch { /* Ignore */ }
-            await Task.Delay(5000);
+        }
+        catch (Exception ex)
+        {
+            // ログ出力など
+            System.Diagnostics.Debug.WriteLine($"Wifi Check Error: {ex.Message}");
         }
     }
 
