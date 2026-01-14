@@ -14,30 +14,32 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '6.x' # Use .NET SDK to build .NET Framework apps
+
+    - name: Build
+      run: dotnet build -c Release
+
     - name: Package Assets
       shell: pwsh
       run: |
         mkdir release_assets
         $tag = $env:GITHUB_REF_NAME
         
-        # Standard
-        $stdExe = "bin/Publish/Standard/ProxySwitcher.exe"
-        if (Test-Path $stdExe) {
-            $stdDestExe = "release_assets/ProxySwitcher_${tag}_Standard.exe"
-            Copy-Item $stdExe $stdDestExe
-            Compress-Archive -Path $stdDestExe -DestinationPath "release_assets/ProxySwitcher_${tag}_Standard.zip" -Force
-        } else {
-            Write-Error "Standard EXE not found at $stdExe"
-        }
+        # Target File
+        $exePath = "bin/Release/net48/ProxySwitcher.exe"
         
-        # Lightweight
-        $lwExe = "bin/Publish/Lightweight/ProxySwitcher.exe"
-        if (Test-Path $lwExe) {
-            $lwDestExe = "release_assets/ProxySwitcher_${tag}_Lightweight.exe"
-            Copy-Item $lwExe $lwDestExe
-            Compress-Archive -Path $lwDestExe -DestinationPath "release_assets/ProxySwitcher_${tag}_Lightweight.zip" -Force
+        if (Test-Path $exePath) {
+            # Copy EXE
+            $destExe = "release_assets/ProxySwitcher_${tag}.exe"
+            Copy-Item $exePath $destExe
+            
+            # Create ZIP
+            Compress-Archive -Path $destExe -DestinationPath "release_assets/ProxySwitcher_${tag}.zip" -Force
         } else {
-             Write-Error "Lightweight EXE not found at $lwExe"
+            Write-Error "Build artifact not found at $exePath"
         }
 
     - name: Create Release
