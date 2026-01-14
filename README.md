@@ -16,7 +16,7 @@
 ## 使い方
 
 ### 1. 準備
-- `ProxySwitcher.exe` をダウンロードして、任意のフォルダに配置してください。
+- [`ProxySwitcher.exe`](https://github.com/clay7614/ProxySwitcher/releases/download/v2.1.0/ProxySwitcher_v2.1.0.exe) をダウンロードして、任意のフォルダに配置してください。
 - 実行するだけで動作します。
 
 ### 2. 基本的な操作
