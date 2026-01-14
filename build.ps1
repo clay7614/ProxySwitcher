@@ -1,14 +1,22 @@
-Write-Host "Building Standard..."
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o bin/Publish/Standard
+# ProxySwitcher ビルドスクリプト (for .NET Framework 4.8)
+# 使用方法: PowerShellで .\build.ps1 を実行してください。
 
-if (Test-Path obj) { Remove-Item -Path obj -Recurse -Force }
+Write-Host "ビルドを開始します (.NET Framework 4.8)..." -ForegroundColor Cyan
 
-Write-Host "Building Lightweight..."
-dotnet publish -c Release -r win-x64 --self-contained false -p:SelfContained=false -p:PublishSingleFile=true -o bin/Publish/Lightweight
+# クリーンアップ
+if (Test-Path "bin") { Remove-Item -Path "bin" -Recurse -Force }
+if (Test-Path "obj") { Remove-Item -Path "obj" -Recurse -Force }
 
-# Lightweight版にアイコンファイルをコピー
-Write-Host "Copying icons to Lightweight..."
-Copy-Item "Utilities/icon_on.ico" "bin/Publish/Lightweight/icon_on.ico" -Force
-Copy-Item "Utilities/icon_off.ico" "bin/Publish/Lightweight/icon_off.ico" -Force
+# ビルド実行
+dotnet build -c Release
 
-Get-ChildItem -Path bin/Publish -Recurse -Include *.exe, *.ico | Select-Object FullName, Length
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "ビルドに失敗しました。"
+    exit 1
+}
+
+Write-Host "`nビルドが完了しました！" -ForegroundColor Green
+$outputDir = "bin\Release\net48"
+Write-Host "出力先: $outputDir"
+
+Get-ChildItem -Path $outputDir -Recurse -Include "*.exe" | Select-Object FullName, Length
