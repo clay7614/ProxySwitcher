@@ -1,14 +1,16 @@
-Write-Host "Building Standard..."
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o bin/Publish/Standard
+$ErrorActionPreference = "Stop"
 
-if (Test-Path obj) { Remove-Item -Path obj -Recurse -Force }
+Write-Host "Build starting... (.NET Framework 4.8)" -ForegroundColor Cyan
 
-Write-Host "Building Lightweight..."
-dotnet publish -c Release -r win-x64 --self-contained false -p:SelfContained=false -p:PublishSingleFile=true -o bin/Publish/Lightweight
+# Cleanup
+if (Test-Path "bin") { Remove-Item -Path "bin" -Recurse -Force -ErrorAction SilentlyContinue }
+if (Test-Path "obj") { Remove-Item -Path "obj" -Recurse -Force -ErrorAction SilentlyContinue }
 
-# Lightweight版にアイコンファイルをコピー
-Write-Host "Copying icons to Lightweight..."
-Copy-Item "Utilities/icon_on.ico" "bin/Publish/Lightweight/icon_on.ico" -Force
-Copy-Item "Utilities/icon_off.ico" "bin/Publish/Lightweight/icon_off.ico" -Force
+# Build
+dotnet build -c Release
 
-Get-ChildItem -Path bin/Publish -Recurse -Include *.exe, *.ico | Select-Object FullName, Length
+Write-Host "`nBuild complete!" -ForegroundColor Green
+$outputDir = "bin\Release\net48"
+Write-Host "Output: $outputDir"
+
+Get-ChildItem -Path $outputDir -Recurse -Include "*.exe" | Select-Object FullName, Length

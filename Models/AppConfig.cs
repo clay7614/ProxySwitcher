@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
+using System.Web.Script.Serialization; // Requires System.Web.Extensions reference
 
 namespace ProxySwitcher.Models;
 
@@ -22,8 +22,10 @@ public class AppConfig
         try
         {
             string? dir = Path.GetDirectoryName(ConfigPath);
-            if (dir != null) Directory.CreateDirectory(dir);
-            string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+            if (dir != null && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            
+            var serializer = new JavaScriptSerializer();
+            string json = serializer.Serialize(this);
             File.WriteAllText(ConfigPath, json);
         }
         catch { }
@@ -36,7 +38,8 @@ public class AppConfig
             if (File.Exists(ConfigPath))
             {
                 string json = File.ReadAllText(ConfigPath);
-                return JsonSerializer.Deserialize<AppConfig>(json) ?? new AppConfig();
+                var serializer = new JavaScriptSerializer();
+                return serializer.Deserialize<AppConfig>(json) ?? new AppConfig();
             }
         }
         catch { }

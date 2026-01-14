@@ -2,20 +2,32 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
+    <TargetFramework>net48</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
     <ApplicationIcon>app.ico</ApplicationIcon>
-    
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="Utilities\icon_on.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Utilities\icon_off.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Compile Remove="Trials\**" />
+    <EmbeddedResource Remove="Trials\**" />
+    <None Remove="Trials\**" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Utilities\icon_on.ico" />
+    <None Remove="Utilities\icon_off.ico" />
+    <EmbeddedResource Include="Utilities\icon_on.ico">
+      <LogicalName>ProxySwitcher.Utilities.icon_on.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utilities\icon_off.ico">
+      <LogicalName>ProxySwitcher.Utilities.icon_off.ico</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

@@ -1,7 +1,7 @@
 # ProxySwitcher
 
 ![Platform-Windows](https://img.shields.io/badge/Platform-Windows-blue.svg)
-![Framework-.NET9](https://img.shields.io/badge/Framework-.NET%209-purple.svg)
+![Framework-.NET4.8](https://img.shields.io/badge/Framework-.NET%20Framework%204.8-purple.svg)
 
 **ProxySwitcher** は、Windows のプロキシ設定をタスクトレイから切り替えられるアプリケーションです。
 
@@ -16,8 +16,8 @@
 ## 使い方
 
 ### 1. 準備
-- ブラウザによるブロックを避けるため、リリースは **EXE形式** と **ZIP形式** の両方で配布しています。
-- 軽量版 (`Lightweight.zip`) を使用する場合のみ、**.NET 9 ランタイム**が必要です。
+- `ProxySwitcher.exe` をダウンロードして、任意のフォルダに配置してください。
+- 実行するだけで動作します。
 
 ### 2. 基本的な操作
 - **プロキシの切り替え**: 
@@ -34,4 +34,4 @@
 ## システム要件
 
 - **OS**: Windows 10 / 11
-- **ランタイム**: .NET 9
+- **ランタイム**: .NET Framework 4.8

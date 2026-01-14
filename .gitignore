@@ -13,3 +13,5 @@ obj/
 # Others
 .DS_Store
 Thumbs.db
+
+release_assets/
