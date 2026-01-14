@@ -17,6 +17,8 @@
 
 ### 1. 準備
 - [`ProxySwitcher.exe`](https://github.com/clay7614/ProxySwitcher/releases/download/v2.1.0/ProxySwitcher_v2.1.0.exe) をダウンロードして、任意のフォルダに配置してください。
+  
+  ※ダウンロードが失敗する場合、[`ProxySwitcher.zip`](https://github.com/clay7614/ProxySwitcher/releases/download/v2.1.0/ProxySwitcher_v2.1.0.zip)をダウンロードし、展開してからファイルを実行してください。
 - 実行するだけで動作します。
 
 ### 2. 基本的な操作
@@ -35,6 +37,5 @@
 
 - **OS**: Windows 10 / 11
 
-## 注意点
+## FAQ
 - 「次により位置情報が使用中：ProxySwitcher」と表示されることがありますが、  WiFIのスキャンやプロキシの自動切替の際に、SSIDを取得するために表示される現象です。実際に位置情報の取得は行っておりません。
-- `ProxySwitcher.exe`のダウンロードが失敗する場合、[`ProxySwitcher.zip`](https://github.com/clay7614/ProxySwitcher/releases/download/v2.1.0/ProxySwitcher_v2.1.0.zip)をダウンロードし、展開してからファイルを実行してください。
