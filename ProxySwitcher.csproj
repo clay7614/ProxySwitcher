@@ -19,4 +19,15 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Utilities\icon_on.ico" />
+    <None Remove="Utilities\icon_off.ico" />
+    <EmbeddedResource Include="Utilities\icon_on.ico">
+      <LogicalName>ProxySwitcher.Utilities.icon_on.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utilities\icon_off.ico">
+      <LogicalName>ProxySwitcher.Utilities.icon_off.ico</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

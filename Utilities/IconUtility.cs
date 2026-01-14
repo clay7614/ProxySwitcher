@@ -28,6 +28,6 @@ public static class IconUtility
         catch { /* ロード失敗時はデフォルトアイコンへ */ }
 
         // リソースがない場合はアプリケーション自体のアイコンを返す
-        return Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.ExecutablePath) ?? SystemIcons.Application;
+        return Icon.ExtractAssociatedIcon(Application.ExecutablePath) ?? SystemIcons.Application;
     }
 }
