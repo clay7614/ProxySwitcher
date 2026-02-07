@@ -7,9 +7,12 @@ namespace ProxySwitcher.Models;
 
 public class AppConfig
 {
-    public string ProxyServer { get; set; } = "proxy.maizuru-ct.ac.jp:8080";
+    public string ProxyServer { get; set; } = "";
     public List<string> TargetSSIDs { get; set; } = new List<string> { "MCSTUDENT" };
     public bool WifiAutomationEnabled { get; set; } = true;
+
+    [ScriptIgnore]
+    public bool IsNewInstance { get; set; } = false;
 
     private static readonly string ConfigPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -43,6 +46,6 @@ public class AppConfig
             }
         }
         catch { }
-        return new AppConfig();
+        return new AppConfig { IsNewInstance = true };
     }
 }

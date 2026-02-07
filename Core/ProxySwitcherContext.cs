@@ -1,5 +1,7 @@
 using System;
 using System.Drawing;
+using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Forms;
 using ProxySwitcher.Managers;
 using ProxySwitcher.Models;
@@ -67,6 +69,32 @@ public class ProxySwitcherContext : ApplicationContext
             }
         };
 
+        // バージョン情報 (親メニュー)
+        ToolStripMenuItem versionParentItem = new ToolStripMenuItem("バージョン情報");
+
+        // サブメニュー: バージョン番号 (表示専用)
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        string versionText = $"バージョン: v{version?.ToString(2)}";
+        ToolStripMenuItem versionItem = new ToolStripMenuItem(versionText);
+        // versionItem.Enabled = false;
+
+        // サブメニュー: GitHubリンク
+        ToolStripMenuItem githubItem = new ToolStripMenuItem("GitHubを開く");
+        githubItem.Click += (s, e) => {
+            try
+            {
+                Process.Start(new ProcessStartInfo("https://github.com/clay7614/ProxySwitcher") { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"リンクを開けませんでした: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        };
+
+        // 親メニューに子要素を追加
+        versionParentItem.DropDownItems.Add(versionItem);
+        versionParentItem.DropDownItems.Add(githubItem);
+
         ToolStripMenuItem exitItem = new ToolStripMenuItem("終了");
         exitItem.Click += (s, e) => {
             ExitThread();
@@ -75,6 +103,9 @@ public class ProxySwitcherContext : ApplicationContext
         menu.Items.Add(toggleItem);
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add(settingsItem);
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(versionParentItem); // 親メニューを追加
+        menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add(exitItem);
 
         return menu;

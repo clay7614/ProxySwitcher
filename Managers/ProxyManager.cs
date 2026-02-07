@@ -26,6 +26,20 @@ public static class ProxyManager
         return false;
     }
 
+    public static string? GetCurrentProxyServer()
+    {
+        try
+        {
+            using RegistryKey? key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath);
+            if (key != null)
+            {
+                return key.GetValue("ProxyServer") as string;
+            }
+        }
+        catch { }
+        return null;
+    }
+
     public static void SetProxy(bool enable, string? server = null)
     {
         try

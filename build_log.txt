@@ -1,0 +1,3 @@
+﻿  蠕ｩ蜈・ｯｾ雎｡縺ｮ繝励Ο繧ｸ繧ｧ繧ｯ繝医ｒ豎ｺ螳壹＠縺ｦ縺・∪縺・..
+  蠕ｩ蜈・ｯｾ雎｡縺ｮ縺吶∋縺ｦ縺ｮ繝励Ο繧ｸ繧ｧ繧ｯ繝医・譛譁ｰ縺ｧ縺吶・
+C:\Program Files\dotnet\sdk\9.0.301\Microsoft.Common.CurrentVersion.targets(4917,5): warning MSB3026: "obj\Release\net48\ProxySwitcher.exe" 繧・"bin\Release\net48\ProxySwitcher.exe" 縺ｫ繧ｳ繝斐・縺ｧ縺阪∪縺帙ｓ縺ｧ縺励◆縲・000 繝溘Μ遘剃ｻ･蜀・↓ 1 蝗樒岼縺ｮ蜀崎ｩｦ陦後ｒ髢句ｧ九＠縺ｾ縺吶５he process cannot access the file 'C:\Users\Owner\Documents\GitHub\ProxySwitcher\ProxySwitcher\bin\Release\net48\ProxySwitcher.exe' because it is being used by another process. 縺薙・繝輔ぃ繧､繝ｫ縺ｯ "ProxySwitcher (18012)" 縺ｫ繧医▲縺ｦ繝ｭ繝・け縺輔ｌ縺ｦ縺・∪縺吶・[C:\Users\Owner\Documents\GitHub\ProxySwitcher\ProxySwitcher\ProxySwitcher.csproj]

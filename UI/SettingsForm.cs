@@ -10,6 +10,7 @@ namespace ProxySwitcher.UI;
 
 public class SettingsForm : Form
 {
+    private CheckBox _useSystemProxyCheckBox = null!;
     private TextBox _serverTextBox = null!;
     private CheckedListBox _ssidListBox = null!;
     private CheckBox _autostartCheckBox = null!;
@@ -25,13 +26,20 @@ public class SettingsForm : Form
     {
         _config = AppConfig.Load();
         InitializeComponent();
+        
+        // 初回起動時（設定が空）の場合
+        if (_config.IsNewInstance)
+        {
+            _useSystemProxyCheckBox.Checked = true;
+            UpdateProxyServerFromSystem();
+        }
     }
 
     private void InitializeComponent()
     {
         this.Font = UIConstants.DefaultFont;
         this.Text = "設定";
-        this.Size = new Size(420, 500); // サイズに余裕を持たせる
+        this.Size = new Size(420, 535); // サイズ調整 (+35px)
         try {
             this.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         } catch { /* Fallback or ignore */ }
@@ -40,11 +48,17 @@ public class SettingsForm : Form
         this.MinimizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
 
-        Label label = new Label() { Text = "プロキシサーバー (host:port):", Left = 20, Top = 20, Width = 300, Height = 25 };
-        _serverTextBox = new TextBox() { Left = 20, Top = 50, Width = 360, Text = _config.ProxyServer };
+        _useSystemProxyCheckBox = new CheckBox() { Text = "Windowsの現在の設定を使用", Left = 20, Top = 20, Width = 380, Height = 25 };
+        _useSystemProxyCheckBox.CheckedChanged += (s, e) => {
+            _serverTextBox.Enabled = !_useSystemProxyCheckBox.Checked;
+            if (_useSystemProxyCheckBox.Checked) UpdateProxyServerFromSystem();
+        };
 
-        Label ssidLabel = new Label() { Text = "対象のWiFi (チェックしたWiFiでプロキシON):", Left = 20, Top = 90, Width = 350, Height = 25 };
-        _ssidListBox = new CheckedListBox() { Left = 20, Top = 120, Width = 260, Height = 140 };
+        Label label = new Label() { Text = "プロキシサーバー (host:port):", Left = 20, Top = 55, Width = 300, Height = 25 };
+        _serverTextBox = new TextBox() { Left = 20, Top = 85, Width = 360, Text = _config.ProxyServer };
+
+        Label ssidLabel = new Label() { Text = "対象のWiFi:", Left = 20, Top = 125, Width = 350, Height = 25 };
+        _ssidListBox = new CheckedListBox() { Left = 20, Top = 155, Width = 260, Height = 140 };
         
         // 保存されているSSIDを追加してチェックを入れる
         foreach (var ssid in _config.TargetSSIDs)
@@ -52,24 +66,25 @@ public class SettingsForm : Form
             _ssidListBox.Items.Add(ssid, true);
         }
 
-        _scanButton = new Button() { Text = "スキャン", Left = 290, Top = 120, Width = 90, Height = 35 };
+        _scanButton = new Button() { Text = "スキャン", Left = 290, Top = 155, Width = 90, Height = 35 };
         _scanButton.Click += ScanButton_Click;
 
-        Label manualLabel = new Label() { Text = "手動追加:", Left = 20, Top = 285, Width = 100, Height = 25 };
-        _manualSsidTextBox = new TextBox() { Left = 125, Top = 282, Width = 155 };
-        _addButton = new Button() { Text = "追加", Left = 290, Top = 280, Width = 90, Height = 35 };
+        Label manualLabel = new Label() { Text = "手動追加(チェックしたWiFiでプロキシを自動切替):", Left = 20, Top = 320, Width = 100, Height = 25 };
+        _manualSsidTextBox = new TextBox() { Left = 125, Top = 317, Width = 155 };
+        _addButton = new Button() { Text = "追加", Left = 290, Top = 315, Width = 90, Height = 35 };
         _addButton.Click += AddButton_Click;
 
-        _wifiAutoCheckBox = new CheckBox() { Text = "指定SSID接続時に自動でON/OFFを切り替える", Left = 20, Top = 325, Width = 380, Height = 30, Checked = _config.WifiAutomationEnabled };
+        _wifiAutoCheckBox = new CheckBox() { Text = "チェックしたWiFiへ接続したら、プロキシを自動で切替", Left = 20, Top = 360, Width = 380, Height = 30, Checked = _config.WifiAutomationEnabled };
 
-        _autostartCheckBox = new CheckBox() { Text = "Windows起動時に自動実行する", Left = 20, Top = 360, Width = 380, Height = 30, Checked = AutoStartManager.IsAutoStartEnabled() };
+        _autostartCheckBox = new CheckBox() { Text = "Windows起動時に自動実行", Left = 20, Top = 395, Width = 380, Height = 30, Checked = AutoStartManager.IsAutoStartEnabled() };
 
-        _saveButton = new Button() { Text = "保存", Left = 210, Top = 410, Width = 90, Height = 35 };
+        _saveButton = new Button() { Text = "保存", Left = 210, Top = 445, Width = 90, Height = 35 };
         _saveButton.Click += SaveButton_Click;
 
-        _cancelButton = new Button() { Text = "キャンセル", Left = 310, Top = 410, Width = 90, Height = 35 };
+        _cancelButton = new Button() { Text = "キャンセル", Left = 310, Top = 445, Width = 90, Height = 35 };
         _cancelButton.Click += (s, e) => this.Close();
 
+        this.Controls.Add(_useSystemProxyCheckBox);
         this.Controls.Add(label);
         this.Controls.Add(_serverTextBox);
         this.Controls.Add(ssidLabel);
@@ -82,6 +97,15 @@ public class SettingsForm : Form
         this.Controls.Add(_autostartCheckBox);
         this.Controls.Add(_saveButton);
         this.Controls.Add(_cancelButton);
+    }
+
+    private void UpdateProxyServerFromSystem()
+    {
+        string? currentProxy = ProxyManager.GetCurrentProxyServer();
+        if (!string.IsNullOrEmpty(currentProxy))
+        {
+            _serverTextBox.Text = currentProxy;
+        }
     }
 
     private async void ScanButton_Click(object? sender, EventArgs e)
