@@ -57,7 +57,7 @@ public class SettingsForm : Form
         Label label = new Label() { Text = "プロキシサーバー (host:port):", Left = 20, Top = 55, Width = 300, Height = 25 };
         _serverTextBox = new TextBox() { Left = 20, Top = 85, Width = 360, Text = _config.ProxyServer };
 
-        Label ssidLabel = new Label() { Text = "対象のWiFi:", Left = 20, Top = 125, Width = 350, Height = 25 };
+        Label ssidLabel = new Label() { Text = "対象のWiFi(チェックしたWiFiでプロキシを自動切替):", Left = 20, Top = 125, Width = 350, Height = 25 };
         _ssidListBox = new CheckedListBox() { Left = 20, Top = 155, Width = 260, Height = 140 };
         
         // 保存されているSSIDを追加してチェックを入れる
@@ -69,7 +69,7 @@ public class SettingsForm : Form
         _scanButton = new Button() { Text = "スキャン", Left = 290, Top = 155, Width = 90, Height = 35 };
         _scanButton.Click += ScanButton_Click;
 
-        Label manualLabel = new Label() { Text = "手動追加(チェックしたWiFiでプロキシを自動切替):", Left = 20, Top = 320, Width = 100, Height = 25 };
+        Label manualLabel = new Label() { Text = "手動追加:", Left = 20, Top = 320, Width = 100, Height = 25 };
         _manualSsidTextBox = new TextBox() { Left = 125, Top = 317, Width = 155 };
         _addButton = new Button() { Text = "追加", Left = 290, Top = 315, Width = 90, Height = 35 };
         _addButton.Click += AddButton_Click;
