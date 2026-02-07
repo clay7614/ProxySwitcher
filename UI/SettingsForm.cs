@@ -27,6 +27,10 @@ public class SettingsForm : Form
         _config = AppConfig.Load();
         InitializeComponent();
         
+        // 設定の反映
+        _useSystemProxyCheckBox.Checked = _config.UseSystemProxy;
+        _serverTextBox.Enabled = !_config.UseSystemProxy;
+
         // 初回起動時（設定が空）の場合
         if (_config.IsNewInstance)
         {
@@ -162,6 +166,7 @@ public class SettingsForm : Form
     private void SaveButton_Click(object? sender, EventArgs e)
     {
         _config.ProxyServer = _serverTextBox.Text.Trim();
+        _config.UseSystemProxy = _useSystemProxyCheckBox.Checked;
         
         _config.TargetSSIDs.Clear();
         foreach (string item in _ssidListBox.CheckedItems)

@@ -10,6 +10,7 @@ public class AppConfig
     public string ProxyServer { get; set; } = "";
     public List<string> TargetSSIDs { get; set; } = new List<string> { "MCSTUDENT" };
     public bool WifiAutomationEnabled { get; set; } = true;
+    public bool UseSystemProxy { get; set; } = false;
 
     [ScriptIgnore]
     public bool IsNewInstance { get; set; } = false;
